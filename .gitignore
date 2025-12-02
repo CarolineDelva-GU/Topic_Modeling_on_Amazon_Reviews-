@@ -1,0 +1,61 @@
+# ---- Python ----
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pkl
+*.pickle
+
+# Virtual environments
+.venv/
+venv/
+env/
+*/.venv/
+*/venv/
+*/env/
+
+# pip / packaging
+*.egg-info/
+.eggs/
+dist/
+build/
+
+# Jupyter / IPython
+.ipynb_checkpoints/
+*.ipynb~
+
+# Env / secrets
+.env
+*.env
+*.secret
+*.token
+credentials.json
+
+# OS / editor junk
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# Logs
+*.log
+
+# Temporary files
+tmp/
+*.tmp
+*.bak
+
+# VSCode
+.vscode/
+
+# PyCharm / IntelliJ
+.idea/
+
+# pytest / coverage
+.coverage
+htmlcov/
+.cache/
+
+# Project-specific artifacts
+data/
+amazon_raw/
