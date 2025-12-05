@@ -56,6 +56,5 @@ tmp/
 htmlcov/
 .cache/
 
-# Project-specific artifacts
-data/
+
 amazon_raw/

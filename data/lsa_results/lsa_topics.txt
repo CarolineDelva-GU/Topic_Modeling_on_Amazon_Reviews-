@@ -1,0 +1,220 @@
+
+### LSA Topic 0 ###
+hair                 0.7075
+skin                 0.2027
+work                 0.1278
+brush                0.1201
+color                0.1114
+long                 0.1089
+quality              0.0993
+price                0.0988
+face                 0.0958
+dry                  0.0877
+feel                 0.0839
+scent                0.0829
+smell                0.0764
+fine                 0.0762
+make                 0.0746
+smells               0.0696
+shampoo              0.0669
+day                  0.0653
+small                0.0644
+oil                  0.0643
+
+### LSA Topic 1 ###
+hair                 0.5936
+curly                0.0321
+fine hair            0.0312
+hair hair            0.0290
+clips                0.0272
+long hair            0.0266
+curly hair           0.0248
+shampoo              0.0221
+conditioner          0.0206
+hold hair            0.0201
+clip                 0.0200
+hold                 0.0187
+iron                 0.0181
+curls                0.0175
+comb                 0.0151
+frizzy               0.0140
+hair place           0.0125
+makes hair           0.0119
+hair fine            0.0117
+scalp                0.0115
+
+### LSA Topic 2 ###
+skin                 0.4450
+hair                 0.2293
+dry                  0.0758
+smells               0.0695
+cream                0.0681
+face                 0.0675
+sensitive            0.0667
+oil                  0.0662
+feels                0.0593
+scent                0.0575
+sensitive skin       0.0571
+serum                0.0498
+dry skin             0.0487
+moisturizer          0.0456
+feeling              0.0416
+feel                 0.0396
+mask                 0.0368
+greasy               0.0357
+smell                0.0352
+leaves               0.0350
+
+### LSA Topic 3 ###
+quality              0.7694
+skin                 0.1396
+smells               0.0651
+price                0.0591
+hair                 0.0550
+cute                 0.0510
+high quality         0.0510
+poor                 0.0495
+value                0.0426
+high                 0.0412
+feels                0.0288
+oil                  0.0284
+quality price        0.0261
+cream                0.0201
+sensitive            0.0186
+looked               0.0185
+sensitive skin       0.0173
+expected             0.0156
+moisturizer          0.0147
+skin feels           0.0137
+
+### LSA Topic 4 ###
+color                0.6991
+colors               0.1461
+polish               0.0861
+nail                 0.0763
+beautiful            0.0758
+wig                  0.0618
+pink                 0.0517
+dark                 0.0510
+light                0.0475
+nails                0.0443
+brown                0.0421
+apply                0.0399
+lip                  0.0382
+nail polish          0.0357
+natural              0.0346
+darker               0.0311
+ordered              0.0309
+goes                 0.0308
+day                  0.0296
+black                0.0295
+
+### LSA Topic 5 ###
+work                 0.5348
+color                0.2709
+quality              0.2697
+skin                 0.1565
+colors               0.0862
+hair                 0.0449
+polish               0.0426
+beautiful            0.0416
+nail                 0.0274
+wear                 0.0271
+dark                 0.0240
+wig                  0.0202
+hair work            0.0199
+nails                0.0195
+high quality         0.0183
+expected             0.0176
+poor                 0.0175
+stay                 0.0172
+cute                 0.0171
+dry skin             0.0164
+
+### LSA Topic 6 ###
+price                0.5738
+smell                0.2889
+scent                0.2111
+smells               0.1833
+color                0.0668
+bottle               0.0619
+shampoo              0.0615
+soap                 0.0581
+strong               0.0503
+conditioner          0.0494
+light                0.0475
+hair                 0.0376
+lotion               0.0370
+wig                  0.0360
+gift                 0.0353
+oil                  0.0349
+perfume              0.0315
+order                0.0309
+body                 0.0299
+wonderful            0.0293
+
+### LSA Topic 7 ###
+smell                0.5454
+smells               0.2449
+scent                0.2256
+quality              0.1395
+soap                 0.1326
+bottle               0.0736
+gift                 0.0651
+clean                0.0634
+strong               0.0628
+shampoo              0.0572
+conditioner          0.0534
+work                 0.0513
+oil                  0.0487
+long                 0.0485
+body                 0.0461
+hands                0.0435
+perfume              0.0427
+wash                 0.0410
+lotion               0.0408
+bath                 0.0405
+
+### LSA Topic 8 ###
+color                0.4104
+smell                0.3368
+brush                0.3144
+work                 0.2194
+quality              0.1511
+price                0.1461
+brushes              0.0869
+smells               0.0865
+skin                 0.0722
+bristles             0.0494
+scent                0.0488
+shampoo              0.0322
+conditioner          0.0309
+feels                0.0219
+body                 0.0197
+clean                0.0196
+texture              0.0193
+soap                 0.0192
+scalp                0.0185
+smooth               0.0179
+
+### LSA Topic 9 ###
+smells               0.7500
+scent                0.1612
+soap                 0.0949
+color                0.0879
+work                 0.0817
+brush                0.0659
+bottle               0.0584
+conditioner          0.0539
+shampoo              0.0522
+happy                0.0486
+body                 0.0440
+oil                  0.0427
+feels                0.0423
+wonderful            0.0415
+gift                 0.0413
+beard                0.0385
+cute                 0.0276
+leaves               0.0266
+loves                0.0259
+clean                0.0248
