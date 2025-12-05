@@ -13,13 +13,12 @@
 
 ### **Task**
 
-This project conducts a comparative analysis of three topic modeling approaches: **LDA**, **LSA**, and a **BERT-based transformer model**. The goal is to automatically discover meaningful topics from large collections of unstructured text and evaluate how classical statistical methods compare to modern transformer-based approaches in terms of **topic quality, coherence, and interpretability**.
-The models were selected because they rely on fundamentally different text representations (bag-of-words, TF-IDF, embeddings), allowing a diverse comparison across modeling paradigms.
+This project is a comparative analysis of the topic models **LDA**, **LSA**, and a **BERT-based** transformer model. The task is to automatically discover meaningful topics from large amounts of unstructured text and evaluate how classical statistical models compare to modern transformer-based approaches in terms of topic quality, coherence, and interpretability. These models were chosen because they use different text representations, including **bag-of-words**, **TF-IDF**, and embeddings. The goal is to determine which model provides the best topic distribution.
+
 
 ### **Why It Matters**
 
-Topic modeling is a widely used method in industry and research for understanding large amounts of text and inferring human behavior. Each model type brings different strengths and limitations, so there is no single universal solution.
-By comparing statistical models and transformer-based methods, especially in the context of customer feedback, we can identify which approaches generate more coherent and actionable topics. These insights can help businesses improve products and services and guide practitioners in selecting effective modeling techniques.
+This topic matters because it is one of the most widely used methods in tech today to tackle issues that deal with text and to better understand human behavior. Since there are multiple models that have different fundamental approaches, it is important to understand how each works and compare them, as there is never a one-size-fits-all solution. By comparing the different models’ approaches, from distributions to embeddings, we can identify which ones work best on customer feedback. This can, in return, assist businesses in improving their products and services. Additionally, it can show how transformer-based models can improve modeling and help individuals assess which methods work better. 
 
 ### **Desired Outcome (3 Weeks)**
 
@@ -45,6 +44,9 @@ Includes: Amazon product reviews (text), large scale, English, consumer domain.
 * Tokenization
 * Optional stopword removal
 * Data formatting for each model (e.g., BOW for LDA, TF-IDF for LSA, embeddings for BERT models)
+
+The text will first be normalized by lowercasing all words and cleaning out punctuation, emojis, URLs, usernames, and other non-ASCII or irrelevant characters. Named Entity Recognition will be used to anonymize identifiable information so the topic model does not capture specific names as topics. After normalization, the text will be tokenized, stop words and extremely common or rare tokens will be removed, and very short or non-informative tokens will be filtered out. Multi-word expressions (such as common bigrams or trigrams) may be detected and preserved to keep meaningful phrases intact. Finally, the remaining tokens will be lemmatized so that different inflected forms of the same word are reduced to a shared base form.
+
 
 ### **Train/Val/Test Split**
 
