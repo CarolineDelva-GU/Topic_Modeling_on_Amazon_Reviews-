@@ -30,6 +30,7 @@ build/
 *.secret
 *.token
 credentials.json
+nlp_env/
 
 # OS / editor junk
 .DS_Store
@@ -58,3 +59,5 @@ htmlcov/
 
 
 amazon_raw/
+cleaned_data/
+
