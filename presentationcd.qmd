@@ -1,0 +1,163 @@
+---
+title: "Beyond LDA: A Comparative Analysis of Topic Modeling on Amazon Reviews"
+author: "Caroline Delva & Amina Nsanza"
+format:
+  revealjs:
+    theme: simple
+    background-image: background4.png
+    background-size: cover
+    background-position: center
+    slide-number: true
+    transition: fade
+---
+
+# Topic
+
+placeholder
+
+
+
+---
+
+# Data
+
+- UCSD Amazon Reviews 2023  
+- All Beauty subset  
+  - 632K users  
+  - 112K items  
+  - 701K ratings  
+- Raw json files streamed, decompressed, and stored in S3  
+
+---
+
+# Data Cleaning
+
+- Cleaned reviewText, summary, and title fields 
+- Lowercased text, removed URLs, usernames, punctuation, extra white space, and non ASCII characters
+
+---
+
+# NER Redaction
+
+- spaCy `en_core_web_sm` named entity detection  
+- Replace people, organizations, locations with tags  
+  - `[PERSON]`, `[ORG]`, `[LOCATION]`  
+
+  
+---
+
+# Text Preprocessing
+
+- Keep alphabetic tokens with length at least three  
+- Remove extended stopword list  
+  - scikit learn English  
+  - NLTK stopwords  
+  - HTML artifacts  
+  - Specific words such as “great” and “product”  
+
+---
+
+# Count Vectorization
+
+- Unigrams and bigrams  
+- At most 40K features  
+- Frequency filters: `min_df=20`, `max_df=0.5`  
+
+---
+
+# TFIDF Vectorization
+
+- Same text stream, token pattern, and stopwords as count model  
+- TFIDF weights instead of raw counts  
+
+---
+
+# Sentence Embeddings
+
+- SentenceTransformer model such as `all-MiniLM-L6-v2`  
+- Batch encoding into dense embeddings  
+- Save `embeddings.npy` under `amazon_vectors/embeddings/` in S3  
+
+---
+
+# LDA
+
+- Load count vectors and vocab from S3  
+- Train ten topic LDA model in scikit learn  
+- Extract top words per topic and build word clouds  
+- Store outputs under `data/lda_results`  
+
+---
+
+# LSA
+
+- Load TFIDF vectors and vocab from S3  
+- Fit ten topic Truncated SVD model with Normalizer  
+- Extract top terms per component  
+- Save results and plots under `data/lsa_results`  
+
+---
+
+# BERTopic
+
+- Use SentenceTransformer embeddings as input  
+- Dimensionality reduction with UMAP  
+- Cluster documents with HDBSCAN  
+- Extract topics with c TFIDF and refine topic labels  
+- Store topic assignments and probabilities for each review  
+
+---
+
+# LDA Topics (Example)
+
+- Topic 0: hair, iron, clips, flat, dryer, spray  
+  - Heat styling and hold  
+- Topic 7: oil, scent, skin, cream, beard, fragrance  
+  - Oils and fragrance  
+- Topic 8: skin, face, mask, serum, moisturizer  
+  - Skin treatment and hydration  
+
+---
+
+# LSA Topics (Example)
+
+- Topic 1: curly hair, clips, hold, shampoo, conditioner  
+  - Curly hair care  
+- Topic 2: dry skin, cream, sensitive, serum, mask  
+  - Sensitive skin care  
+- Topic 4: color, polish, nails, pink, dark, light  
+  - Color cosmetic items  
+
+---
+
+# BERTopic Topics (Example)
+
+- Topic A: “curl cream”, “leave in”, “frizz”, “wave”  
+  - Curl defining products  
+- Topic B: “retinol”, “serum”, “fine lines”, “texture”  
+  - Anti aging skin care  
+- Topic C: “press on”, “gel polish”, “chip”, “manicure”  
+  - Nail products  
+
+---
+
+# Performance Metrics
+
+
+
+---
+
+# Visualizations
+
+
+
+---
+
+# Results Summary
+
+
+---
+
+# Conclusion
+
+placeholder
