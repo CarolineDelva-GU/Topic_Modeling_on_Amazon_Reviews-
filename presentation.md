@@ -41,23 +41,28 @@ Applied to Amazon Reviews → Produces a quantitative comparison using metrics s
 ---
 
 ## Data  
-**Source:** Amazon Reviews (Beauty Category)  
-**Total Reviews:** *701,528 (full dataset)*  
-**All Beauty subset:** 632K users; 112K items;701K ratings
-**Subset for BERTopic:** *5,000 sampled reviews*  
-**Available fields include:**
-- `rating`
-- `title`
-- `text`
-- `images`
-- `asin`
-- `parent_asin`
-- `user_id`
-- `timestamp`
-- `helpful_vote`
-- `verified_purchase`
+**Source:** Amazon Reviews USCD 2023 dataset
 
-*Raw json files streamed, decompressed, and stored in S3* 
+**Total Reviews:** *701,528 (full dataset)*  
+
+**All Beauty subset:** *632K users; 112K items;701K ratings*
+
+**Subset for BERTopic:** *5,000 sampled reviews*  
+
+**Available fields include:**
+
+  - `rating`
+  - `title`
+  - `text`
+  - `images`
+  - `asin`
+  - `parent_asin`
+  - `user_id`
+  - `timestamp`
+  - `helpful_vote`
+  - `verified_purchase`
+
+*Data collection: Raw json files, scraped, decompressed, and stored in S3* 
 
 ---
 
@@ -90,14 +95,24 @@ Applied to Amazon Reviews → Produces a quantitative comparison using metrics s
 
 - Unigrams and bigrams  
 - At most 40K features  
-- Frequency filters: `min_df=20`, `max_df=0.5`  
+- Kept mid-frequency terms, removed rare words and overly common words.
+
+$$
+x_j^{(d)} = \text{count}(v_j \in d)
+$$
 
 
 
-### TFIDF Vectorization
+
+### TF-IDF Vectorization
 
 - Same text stream, token pattern, and stopwords as count model  
-- TFIDF weights instead of raw counts  
+- TF-IDF weights instead of raw counts  
+
+$$
+\text{tfidf}(v_j, d) = \text{tf}(v_j, d)\,\cdot\, \log\left(\frac{N}{\text{df}(v_j)}\right)
+$$
+
 
 
 
@@ -106,21 +121,28 @@ Applied to Amazon Reviews → Produces a quantitative comparison using metrics s
 - SentenceTransformer model such as `all-MiniLM-L6-v2`  
 - Batch encoding into dense embeddings  
 
+$$
+\mathbf{e}_d = f_{\theta}\!\left(d\right)
+$$
+
+
 ---
 
 # Models
 
+### LDA 
+
+- Load count vectors and vocab  
+- Train ten topic LDA model in scikit learn  
+- Extract top words per topic and build word clouds  
+
 ### LSA 
 
-- Load TFIDF vectors and vocab from S3  
+- Load TFIDF vectors and vocab 
 - Fit ten topic Truncated SVD model with Normalizer  
 - Extract top terms per component  
 
-### LDA 
 
-- Load count vectors and vocab from S3  
-- Train ten topic LDA model in scikit learn  
-- Extract top words per topic and build word clouds  
 
 ### BERTopic
 
