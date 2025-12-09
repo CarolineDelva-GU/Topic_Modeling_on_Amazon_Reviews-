@@ -366,14 +366,14 @@ x_j^{(d)} = \text{count}(v_j \in d)
 <p>Across all three BERTopic performs best on topic coherence.</p>
 <ul>
 <li>Discovered themes that are generally more semantically meaningful and internally consistent</li>
-<li>aligns with expectations → relies on dense sentence embeddings instead of raw word counts.</li>
+<li>Aligns with expectations → relies on dense sentence embeddings instead of raw word counts.</li>
 </ul>
 <p>On topic diversity, LDA comes out strongest → a wider spread of unique top words across topics.</p>
 <ul>
 <li>Better at separating themes distinctly, even if the topics themselves aren’t as coherent.</li>
 <li>LSA struggled → overlapping, less interpretable topics.</li>
 </ul>
-<p>For cluster performance, that ws measured by silhouette score, LDA again performs the best. - BERTopic’s silhouette score was weak - LSA’s poor score → clusters are weakly formed but directionally sensible.</p>
+<p>For cluster performance, that was measured by silhouette score, LDA again performs the best. - BERTopic’s silhouette score was weak - LSA’s poor score → clusters are weakly formed but directionally sensible.</p>
 <p><strong>BERTopic</strong> was the strongest model for <strong>interpretability</strong> and semantic quality, while <strong>LDA</strong> is the strongest for <strong>structural separation</strong> and topic distinctiveness. LSA consistently underperforms across metrics.</p>
 </section>
 <section id="what-to-model-to-use.." class="level4">
