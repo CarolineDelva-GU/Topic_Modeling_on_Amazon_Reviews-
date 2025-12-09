@@ -244,14 +244,14 @@ Silhouette Score  (Clustering Performance):
 Across all three BERTopic performs best on topic coherence. 
 
 - Discovered themes that are generally more semantically meaningful and internally consistent 
-- aligns with expectations → relies on dense sentence embeddings instead of raw word counts.
+- Aligns with expectations → relies on dense sentence embeddings instead of raw word counts.
 
 On topic diversity, LDA comes out strongest →  a wider spread of unique top words across topics. 
 
 - Better at separating themes distinctly, even if the topics themselves aren’t as coherent. 
 - LSA struggled → overlapping, less interpretable topics.
 
-For cluster performance, that ws measured by silhouette score, LDA again performs the best. 
+For cluster performance, that was measured by silhouette score, LDA again performs the best. 
 - BERTopic’s silhouette score was weak 
 - LSA's poor score → clusters are weakly formed but directionally sensible.
 
