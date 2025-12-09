@@ -40,11 +40,11 @@ Applied to Amazon Reviews → Produces a quantitative comparison using metrics s
 
 ---
 
-## Data   (You can change this it was just a filler)
+## Data  
 **Source:** Amazon Reviews (Beauty Category)  
 **Total Reviews:** *701,528 (full dataset)*  
+**All Beauty subset:** 632K users; 112K items;701K ratings
 **Subset for BERTopic:** *5,000 sampled reviews*  
-
 **Available fields include:**
 - `rating`
 - `title`
@@ -57,15 +57,70 @@ Applied to Amazon Reviews → Produces a quantitative comparison using metrics s
 - `helpful_vote`
 - `verified_purchase`
 
+*Raw json files streamed, decompressed, and stored in S3* 
+
 ---
 
-### Data Preprocessing
+# Data Preprocessing
 
-### Data Transformation 
+### Data Cleaning
+
+- Lowercased text, removed URLs, usernames, punctuation, extra white space, and non ASCII characters
+
+### NER Redaction
+
+- spaCy `en_core_web_sm` named entity detection  
+- Replace people, organizations, locations with tags  
+  - `[PERSON]`, `[ORG]`, `[LOCATION]`  
+  
+### Stopwords Removal
+
+- Keep alphabetic tokens with length at least three  
+- Remove extended stopword list  
+  - scikit learn English  
+  - NLTK stopwords  
+  - HTML artifacts  
+  - Specific words such as “great” and “product” 
+
+---
+
+# Data Transformation 
+
+### Count Vectorization
+
+- Unigrams and bigrams  
+- At most 40K features  
+- Frequency filters: `min_df=20`, `max_df=0.5`  
+
+
+
+### TFIDF Vectorization
+
+- Same text stream, token pattern, and stopwords as count model  
+- TFIDF weights instead of raw counts  
+
+
+
+### Sentence Embeddings
+
+- SentenceTransformer model such as `all-MiniLM-L6-v2`  
+- Batch encoding into dense embeddings  
+
+---
+
+# Models
 
 ### LSA 
 
+- Load TFIDF vectors and vocab from S3  
+- Fit ten topic Truncated SVD model with Normalizer  
+- Extract top terms per component  
+
 ### LDA 
+
+- Load count vectors and vocab from S3  
+- Train ten topic LDA model in scikit learn  
+- Extract top words per topic and build word clouds  
 
 ### BERTopic
 
@@ -102,7 +157,25 @@ Model Initialization
 
 ### LDA 
 
+<p align="center">
+  <iframe src="../data/lda_results/ldatable.png" width="800" height="500"></iframe>
+</p>
+
+<p align="center">
+  <iframe src="../data/lda_results/wordclouds/topic_0.png" width="800" height="500"></iframe>
+</p>
+
+
 ### LSA 
+
+<p align="center">
+  <iframe src="../data/lsa_results/lsatable.png" width="800" height="500"></iframe>
+</p>
+
+<p align="center">
+  <iframe src="../data/lsa_results/topicdistribution.png" width="800" height="500"></iframe>
+</p>
+
 
 ### BERTopic 
 

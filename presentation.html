@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.54">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>presentation</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="presentation_files/libs/clipboard/clipboard.min.js"></script>
+<script src="presentation_files/libs/quarto-html/quarto.js"></script>
+<script src="presentation_files/libs/quarto-html/popper.min.js"></script>
+<script src="presentation_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="presentation_files/libs/quarto-html/anchor.min.js"></script>
+<link href="presentation_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="presentation_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="presentation_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="presentation_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="presentation_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+
+
+
+<section id="beyond-lda-a-comparative-analysis-of-topic-modeling-on-amazon-reviews" class="level1">
+<h1>Beyond LDA: A Comparative Analysis of Topic Modeling on Amazon Reviews</h1>
+<section id="team-members-caroline-delva-amina-nsanza" class="level3">
+<h3 class="anchored" data-anchor-id="team-members-caroline-delva-amina-nsanza"><strong>Team Members:</strong> Caroline Delva · Amina Nsanza</h3>
+<hr>
+</section>
+<section id="project-overview" class="level2">
+<h2 class="anchored" data-anchor-id="project-overview">Project Overview</h2>
+<p>This project will explores topic modeling on Amazon Beauty product reviews using three different modeling approaches:</p>
+<ul>
+<li><strong>Latent Dirichlet Allocation (LDA)</strong></li>
+<li><strong>Latent Semantic Analysis (LSA)</strong></li>
+<li><strong>BERTopic (Transformer-Based Topic Modeling)</strong></li>
+</ul>
+<section id="task" class="level3">
+<h3 class="anchored" data-anchor-id="task">Task</h3>
+<p>Discover meaningful topics from large amounts of unstructured text and evaluate how classical statistical models compare to modern transformer-based approaches in terms of <strong>topic quality</strong>, coherence, and interpretability.</p>
+</section>
+<section id="why-it-matters" class="level3">
+<h3 class="anchored" data-anchor-id="why-it-matters">Why It Matters</h3>
+<ul>
+<li>Topic modeling is widely used in the industry to analyze text and better understand human behavior</li>
+<li>Different models → different fundamental approaches
+<ul>
+<li>Understand how each works and compare them. one-size ≠ fits-all solution.</li>
+</ul></li>
+<li>By comparing → we can identify which ones work best on customer feedback.</li>
+<li>Assist businesses in improving their products and services. Additionally, it can show how transformer-based models can improve modeling and help individuals assess which methods work better.</li>
+</ul>
+</section>
+<section id="desired-outcome" class="level3">
+<h3 class="anchored" data-anchor-id="desired-outcome">Desired Outcome</h3>
+<p>A successful outcome is a fully implemented end-to-end pipeline:</p>
+<ul>
+<li>LDA</li>
+<li>LSA</li>
+<li>BERTopic</li>
+</ul>
+<p>Applied to Amazon Reviews → Produces a quantitative comparison using metrics such as:</p>
+<ul>
+<li>Topic coherence</li>
+<li>Topic diversity</li>
+<li>Clustering performance</li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="data" class="level2">
+<h2 class="anchored" data-anchor-id="data">Data</h2>
+<p><strong>Source:</strong> Amazon Reviews (Beauty Category)<br>
+<strong>Total Reviews:</strong> <em>701,528 (full dataset)</em><br>
+<strong>All Beauty subset:</strong> 632K users; 112K items;701K ratings <strong>Subset for BERTopic:</strong> <em>5,000 sampled reviews</em><br>
+<strong>Available fields include:</strong> - <code>rating</code> - <code>title</code> - <code>text</code> - <code>images</code> - <code>asin</code> - <code>parent_asin</code> - <code>user_id</code> - <code>timestamp</code> - <code>helpful_vote</code> - <code>verified_purchase</code></p>
+<p><em>Raw json files streamed, decompressed, and stored in S3</em></p>
+<hr>
+</section>
+</section>
+<section id="data-preprocessing" class="level1">
+<h1>Data Preprocessing</h1>
+<section id="data-cleaning" class="level3">
+<h3 class="anchored" data-anchor-id="data-cleaning">Data Cleaning</h3>
+<ul>
+<li>Lowercased text, removed URLs, usernames, punctuation, extra white space, and non ASCII characters</li>
+</ul>
+</section>
+<section id="ner-redaction" class="level3">
+<h3 class="anchored" data-anchor-id="ner-redaction">NER Redaction</h3>
+<ul>
+<li>spaCy <code>en_core_web_sm</code> named entity detection<br>
+</li>
+<li>Replace people, organizations, locations with tags
+<ul>
+<li><code>[PERSON]</code>, <code>[ORG]</code>, <code>[LOCATION]</code></li>
+</ul></li>
+</ul>
+</section>
+<section id="stopwords-removal" class="level3">
+<h3 class="anchored" data-anchor-id="stopwords-removal">Stopwords Removal</h3>
+<ul>
+<li>Keep alphabetic tokens with length at least three<br>
+</li>
+<li>Remove extended stopword list
+<ul>
+<li>scikit learn English<br>
+</li>
+<li>NLTK stopwords<br>
+</li>
+<li>HTML artifacts<br>
+</li>
+<li>Specific words such as “great” and “product”</li>
+</ul></li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="data-transformation" class="level1">
+<h1>Data Transformation</h1>
+<section id="count-vectorization" class="level3">
+<h3 class="anchored" data-anchor-id="count-vectorization">Count Vectorization</h3>
+<ul>
+<li>Unigrams and bigrams<br>
+</li>
+<li>At most 40K features<br>
+</li>
+<li>Frequency filters: <code>min_df=20</code>, <code>max_df=0.5</code></li>
+</ul>
+</section>
+<section id="tfidf-vectorization" class="level3">
+<h3 class="anchored" data-anchor-id="tfidf-vectorization">TFIDF Vectorization</h3>
+<ul>
+<li>Same text stream, token pattern, and stopwords as count model<br>
+</li>
+<li>TFIDF weights instead of raw counts</li>
+</ul>
+</section>
+<section id="sentence-embeddings" class="level3">
+<h3 class="anchored" data-anchor-id="sentence-embeddings">Sentence Embeddings</h3>
+<ul>
+<li>SentenceTransformer model such as <code>all-MiniLM-L6-v2</code><br>
+</li>
+<li>Batch encoding into dense embeddings</li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="models" class="level1">
+<h1>Models</h1>
+<section id="lsa" class="level3">
+<h3 class="anchored" data-anchor-id="lsa">LSA</h3>
+<ul>
+<li>Load TFIDF vectors and vocab from S3<br>
+</li>
+<li>Fit ten topic Truncated SVD model with Normalizer<br>
+</li>
+<li>Extract top terms per component</li>
+</ul>
+</section>
+<section id="lda" class="level3">
+<h3 class="anchored" data-anchor-id="lda">LDA</h3>
+<ul>
+<li>Load count vectors and vocab from S3<br>
+</li>
+<li>Train ten topic LDA model in scikit learn<br>
+</li>
+<li>Extract top words per topic and build word clouds</li>
+</ul>
+</section>
+<section id="bertopic" class="level3">
+<h3 class="anchored" data-anchor-id="bertopic">BERTopic</h3>
+<p>Model Initialization</p>
+<ul>
+<li>Constructed a BERTopic instance with: SentenceTransformer embeddings</li>
+<li>Dimensionality Reduction (UMAP)</li>
+<li>Clustering (HDBSCAN)
+<ul>
+<li>Identify coherent groups of documents.</li>
+</ul></li>
+<li>Topic Extraction (c-TF-IDF)</li>
+<li>Generated interpretable topic representations → BERTopic’s representation model.</li>
+</ul>
+</section>
+<section id="eda" class="level2">
+<h2 class="anchored" data-anchor-id="eda">EDA</h2>
+<p align="center">
+<iframe src="../data/eda_results/plotly_rating_dist.html" width="800" height="500">
+</iframe>
+</p>
+<p align="center">
+<iframe src="../data/eda_results/plotly_text_dist.html" width="800" height="500">
+</iframe>
+</p>
+<p align="center">
+<iframe src="../data/eda_results/plotly_verified_purchase.html" width="800" height="500">
+</iframe>
+</p>
+<p align="center">
+<iframe src="../data/eda_results/interactive_reviews_ratings_2023.html" width="800" height="500">
+</iframe>
+</p>
+</section>
+<section id="results" class="level2">
+<h2 class="anchored" data-anchor-id="results">Results</h2>
+<section id="lda-1" class="level3">
+<h3 class="anchored" data-anchor-id="lda-1">LDA</h3>
+<p align="center">
+<iframe src="../data/lda_results/ldatable.png" width="800" height="500">
+</iframe>
+</p>
+<p align="center">
+<iframe src="../data/lda_results/wordclouds/topic_0.png" width="800" height="500">
+</iframe>
+</p>
+</section>
+<section id="lsa-1" class="level3">
+<h3 class="anchored" data-anchor-id="lsa-1">LSA</h3>
+<p align="center">
+<iframe src="../data/lsa_results/lsatable.png" width="800" height="500">
+</iframe>
+</p>
+<p align="center">
+<iframe src="../data/lsa_results/topicdistribution.png" width="800" height="500">
+</iframe>
+</p>
+</section>
+<section id="bertopic-1" class="level3">
+<h3 class="anchored" data-anchor-id="bertopic-1">BERTopic</h3>
+<p align="center">
+<iframe src="/data/bert_results/visuals/vis_topics_overview.html" width="850" height="600" style="border:none;">
+</iframe>
+</p>
+</section>
+</section>
+<section id="model-performance-comparison" class="level2">
+<h2 class="anchored" data-anchor-id="model-performance-comparison">Model Performance &amp; Comparison</h2>
+<p>Topic Coherence:</p>
+<ul>
+<li>Assesses how meaningful &amp; interpretable each topic is.</li>
+<li>Ensures that the top words within a topic have a logically connected theme.</li>
+</ul>
+<p>Topic Diversity:</p>
+<ul>
+<li>Measures how distinct the topics are from one another.</li>
+<li>Ensures that a model captures a wide range of themes instead of redundant or overlapping topics.</li>
+</ul>
+<p>Silhouette Score (Clustering Performance):</p>
+<ul>
+<li>Evaluates how well the model groups similar reviews together,</li>
+<li>Validates that topics reflect real structure in customer feedback.</li>
+</ul>
+<section id="topic-model-evaluation-comparison" class="level4">
+<h4 class="anchored" data-anchor-id="topic-model-evaluation-comparison">Topic Model Evaluation Comparison</h4>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 11%">
+<col style="width: 26%">
+<col style="width: 18%">
+<col style="width: 43%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Model</th>
+<th>Topic Coherence (c_v)</th>
+<th>Topic Diversity</th>
+<th>Silhouette Score (Cluster Performance)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>LDA</strong></td>
+<td>0.3000</td>
+<td><strong>0.83</strong></td>
+<td><strong>0.4563</strong></td>
+</tr>
+<tr class="even">
+<td><strong>LSA</strong></td>
+<td>0.3058</td>
+<td>0.47</td>
+<td>-0.0265</td>
+</tr>
+<tr class="odd">
+<td><strong>BERTopic</strong></td>
+<td><strong>0.4204</strong></td>
+<td>0.6384</td>
+<td>0.0502</td>
+</tr>
+</tbody>
+</table>
+<p>Across all three BERTopic performs best on topic coherence.</p>
+<ul>
+<li>Discovered themes that are generally more semantically meaningful and internally consistent</li>
+<li>aligns with expectations → relies on dense sentence embeddings instead of raw word counts.</li>
+</ul>
+<p>On topic diversity, LDA comes out strongest → a wider spread of unique top words across topics.</p>
+<ul>
+<li>Better at separating themes distinctly, even if the topics themselves aren’t as coherent.</li>
+<li>LSA struggled → overlapping, less interpretable topics.</li>
+</ul>
+<p>For cluster performance, that ws measured by silhouette score, LDA again performs the best. - BERTopic’s silhouette score was weak - LSA’s poor score → clusters are weakly formed but directionally sensible.</p>
+<p><strong>BERTopic</strong> was the strongest model for <strong>interpretability</strong> and semantic quality, while <strong>LDA</strong> is the strongest for <strong>structural separation</strong> and topic distinctiveness. LSA consistently underperforms across metrics.</p>
+</section>
+<section id="what-to-model-to-use.." class="level4">
+<h4 class="anchored" data-anchor-id="what-to-model-to-use..">WHAT TO MODEL TO USE…..</h4>
+<ul>
+<li>If you want meaningful, human-like topic themes → <strong>BERTopic</strong>.</li>
+<li>If you need sharply separated clusters → <strong>LDA</strong> is better.</li>
+</ul>
+<p>Overall BERTopic did outperform the baseline models on topic coherence so texts such as reviews, the model would be better and capturing real semantic structure.</p>
+</section>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p align="center">
+<img src="../data/bert_results/visuals/conclusion_flowchart.png" width="700">
+</p>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
