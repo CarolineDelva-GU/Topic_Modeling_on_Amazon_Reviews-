@@ -146,8 +146,6 @@ $$
 
 ### BERTopic
 
-Model Initialization
-
 - Constructed a BERTopic instance with:  SentenceTransformer embeddings
 - Dimensionality Reduction (UMAP) 
 - Clustering (HDBSCAN)
