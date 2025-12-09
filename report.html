@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>presentation</title>
+<title>report</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -23,46 +23,17 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="presentation_files/libs/clipboard/clipboard.min.js"></script>
-<script src="presentation_files/libs/quarto-html/quarto.js"></script>
-<script src="presentation_files/libs/quarto-html/popper.min.js"></script>
-<script src="presentation_files/libs/quarto-html/tippy.umd.min.js"></script>
-<script src="presentation_files/libs/quarto-html/anchor.min.js"></script>
-<link href="presentation_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="presentation_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="presentation_files/libs/bootstrap/bootstrap.min.js"></script>
-<link href="presentation_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="presentation_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="report_files/libs/clipboard/clipboard.min.js"></script>
+<script src="report_files/libs/quarto-html/quarto.js"></script>
+<script src="report_files/libs/quarto-html/popper.min.js"></script>
+<script src="report_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="report_files/libs/quarto-html/anchor.min.js"></script>
+<link href="report_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="report_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="report_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="report_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="report_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
 
 </head>
 
@@ -79,16 +50,16 @@ window.Quarto = {
 <h1>Beyond LDA: A Comparative Analysis of Topic Modeling on Amazon Reviews</h1>
 <section id="team-members-caroline-delva-amina-nsanza" class="level3">
 <h3 class="anchored" data-anchor-id="team-members-caroline-delva-amina-nsanza"><strong>Team Members:</strong> Caroline Delva · Amina Nsanza</h3>
+</section>
+<section id="date-december-12-2025" class="level3">
+<h3 class="anchored" data-anchor-id="date-december-12-2025">Date: December, 12 2025</h3>
+</section>
+<section id="class-advanced-nlp-dsan-5800-professor-chris-larson" class="level3">
+<h3 class="anchored" data-anchor-id="class-advanced-nlp-dsan-5800-professor-chris-larson">Class: Advanced NLP DSAN 5800 · Professor Chris Larson</h3>
 <hr>
 </section>
-<section id="project-overview" class="level2">
-<h2 class="anchored" data-anchor-id="project-overview">Project Overview</h2>
-<p>This project will explores topic modeling on Amazon Beauty product reviews using three different modeling approaches:</p>
-<ul>
-<li><strong>Latent Dirichlet Allocation (LDA)</strong></li>
-<li><strong>Latent Semantic Analysis (LSA)</strong></li>
-<li><strong>BERTopic (Transformer-Based Topic Modeling)</strong></li>
-</ul>
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
 <section id="task" class="level3">
 <h3 class="anchored" data-anchor-id="task">Task</h3>
 <p>Discover meaningful topics from large amounts of unstructured text and evaluate how classical statistical models compare to modern transformer-based approaches in terms of <strong>topic quality</strong>, coherence, and interpretability.</p>
@@ -119,185 +90,102 @@ window.Quarto = {
 <li>Topic diversity</li>
 <li>Clustering performance</li>
 </ul>
+</section>
+</section>
+</section>
+<section id="literature-review" class="level1">
+<h1>Literature Review</h1>
 <hr>
+<section id="methods" class="level2">
+<h2 class="anchored" data-anchor-id="methods">Methods</h2>
+<section id="data-processing" class="level3">
+<h3 class="anchored" data-anchor-id="data-processing">Data Processing</h3>
+<section id="data-collection" class="level4">
+<h4 class="anchored" data-anchor-id="data-collection">Data Collection</h4>
+<p>Data collection was automated as the data was downloaded programmatically from the UCSD Amazon Reviews 2023 (UCSD Amazon Reviews 2023, 2023). The source index page was scraped to locate all the JSON.gz files containing the reviews. Each file was streamed and decompressed, and uploaded to an S3 bucket subfolder, amazon_raw/S3, so that no files were stored locally, as the files were incredibly large.</p>
+</section>
+<section id="data-cleaning" class="level4">
+<h4 class="anchored" data-anchor-id="data-cleaning">Data Cleaning</h4>
+<p>The pipeline looped through each JSON file from the amazon_raw/ S3 directory and cleaned the reviewText, summary, and title fields. Cleaning included lowercasing, removing URLs, usernames, non-ASCII characters, punctuation, and collapsing whitespace.</p>
+</section>
+<section id="named-entity-recognition-redaction" class="level4">
+<h4 class="anchored" data-anchor-id="named-entity-recognition-redaction">Named Entity Recognition Redaction</h4>
+<p>After cleaning, the pipeline applied spaCy’s en_core_web_sm model to detect named entities. Detected people, organizations, locations, and other entity types are replaced with tags like [PERSON], [ORG], and [LOCATION]. This step anonymized the text, preventing identity leakage and bias in the models. Every cleaned record is written to a temporary file and then uploaded to the amazon_clean/ directory in S3 with the same filename.</p>
+</section>
+<section id="text-preprocessing" class="level4">
+<h4 class="anchored" data-anchor-id="text-preprocessing">Text preprocessing</h4>
+<p>The clean text was then preprocessed as the AmazonPreprocessor class streams the clean records from this prefix, reads the chosen text field, and relies on scikit-learn’s token pattern to keep alphabetic tokens of length three or more. Stopwords combined scikit-learn’s English list, NLTK stopwords, simple HTML artifacts such as “br” and “nbsp”, and domain-specific review words such as “great” and “product”, which reduced plain language before vectorization.</p>
+</section>
+<section id="count-vectorization" class="level4">
+<h4 class="anchored" data-anchor-id="count-vectorization">Count vectorization</h4>
+<p>For count vectors, the build_count_vectors method of the AmazonPreprocessor class collected up to max_docs texts from amazon_clean/ and fits a CountVectorizer with unigrams and bigrams, a maximum of 40,000 features, and frequency filters (min_df=20, max_df=0.5). Tokens shorter than three characters were dropped, and the combined stopword list was removed from the corpus. The resulting sparse document–term matrix and vocabulary mapping are written to temporary files on disk and then uploaded to S3 under amazon_vectors/countvectorizer/ as vectors.npz and vocab.json.</p>
+</section>
+<section id="tfidf-vectorization" class="level4">
+<h4 class="anchored" data-anchor-id="tfidf-vectorization">TF–IDF vectorization</h4>
+<p>TF–IDF vectors were built using the build_tfidf_vectors method of the AmazonPreprocessor class, which used the same document stream, token pattern, stopwords, ngram_range, and frequency thresholds as the count model. The TfidfVectorizer produced a sparse matrix of TF–IDF weights instead of raw counts. As with the count vectors, the matrix and vocabulary were then saved as temporary files and uploaded to S3 under amazon_vectors/tfidf/ for later analysis.</p>
+</section>
+<section id="sentence-embeddings" class="level4">
+<h4 class="anchored" data-anchor-id="sentence-embeddings">Sentence embeddings</h4>
+<p>Dense sentence embeddings were created with SentenceTransformer through the build_embeddings method of the AmazonPreprocessor class. The pipeline loaded a specified model, such as all-MiniLM-L6-v2, streamed up to max_docs texts from amazon_clean/, and encoded them in batches into a fixed-size NumPy array of embeddings. The array was saved as embeddings. npy in a temporary directory and then uploaded to S3 under amazon_vectors/embeddings/, providing a parallel dense representation of the same review corpus.</p>
 </section>
 </section>
-<section id="data" class="level2">
-<h2 class="anchored" data-anchor-id="data">Data</h2>
-<p><strong>Source:</strong> Amazon Reviews USCD 2023 dataset</p>
-<p><strong>Total Reviews:</strong> <em>701,528 (full dataset)</em></p>
-<p><strong>All Beauty subset:</strong> <em>632K users; 112K items;701K ratings</em></p>
-<p><strong>Subset for BERTopic:</strong> <em>5,000 sampled reviews</em></p>
-<p><strong>Available fields include:</strong></p>
-<ul>
-<li><code>rating</code></li>
-<li><code>title</code></li>
-<li><code>text</code></li>
-<li><code>images</code></li>
-<li><code>asin</code></li>
-<li><code>parent_asin</code></li>
-<li><code>user_id</code></li>
-<li><code>timestamp</code></li>
-<li><code>helpful_vote</code></li>
-<li><code>verified_purchase</code></li>
-</ul>
-<p><em>Data collection: Raw json files, scraped, decompressed, and stored in S3</em></p>
-<hr>
-</section>
-</section>
-<section id="data-preprocessing" class="level1">
-<h1>Data Preprocessing</h1>
-<section id="data-cleaning" class="level3">
-<h3 class="anchored" data-anchor-id="data-cleaning">Data Cleaning</h3>
-<ul>
-<li>Lowercased text, removed URLs, usernames, punctuation, extra white space, and non ASCII characters</li>
-</ul>
-</section>
-<section id="ner-redaction" class="level3">
-<h3 class="anchored" data-anchor-id="ner-redaction">NER Redaction</h3>
-<ul>
-<li>spaCy <code>en_core_web_sm</code> named entity detection<br>
-</li>
-<li>Replace people, organizations, locations with tags
-<ul>
-<li><code>[PERSON]</code>, <code>[ORG]</code>, <code>[LOCATION]</code></li>
-</ul></li>
-</ul>
-</section>
-<section id="stopwords-removal" class="level3">
-<h3 class="anchored" data-anchor-id="stopwords-removal">Stopwords Removal</h3>
-<ul>
-<li>Keep alphabetic tokens with length at least three<br>
-</li>
-<li>Remove extended stopword list
-<ul>
-<li>scikit learn English<br>
-</li>
-<li>NLTK stopwords<br>
-</li>
-<li>HTML artifacts<br>
-</li>
-<li>Specific words such as “great” and “product”</li>
-</ul></li>
-</ul>
-<hr>
-</section>
-</section>
-<section id="data-transformation" class="level1">
-<h1>Data Transformation</h1>
-<section id="count-vectorization" class="level3">
-<h3 class="anchored" data-anchor-id="count-vectorization">Count Vectorization</h3>
-<ul>
-<li>Unigrams and bigrams<br>
-</li>
-<li>At most 40K features<br>
-</li>
-<li>Kept mid-frequency terms, removed rare words and overly common words.</li>
-</ul>
-<p><span class="math display">\[
-x_j^{(d)} = \text{count}(v_j \in d)
-\]</span></p>
-</section>
-<section id="tf-idf-vectorization" class="level3">
-<h3 class="anchored" data-anchor-id="tf-idf-vectorization">TF-IDF Vectorization</h3>
-<ul>
-<li>Same text stream, token pattern, and stopwords as count model<br>
-</li>
-<li>TF-IDF weights instead of raw counts</li>
-</ul>
-<p><span class="math display">\[
-\text{tfidf}(v_j, d) = \text{tf}(v_j, d)\,\cdot\, \log\left(\frac{N}{\text{df}(v_j)}\right)
-\]</span></p>
-</section>
-<section id="sentence-embeddings" class="level3">
-<h3 class="anchored" data-anchor-id="sentence-embeddings">Sentence Embeddings</h3>
-<ul>
-<li>SentenceTransformer model such as <code>all-MiniLM-L6-v2</code><br>
-</li>
-<li>Batch encoding into dense embeddings</li>
-</ul>
-<p><span class="math display">\[
-\mathbf{e}_d = f_{\theta}\!\left(d\right)
-\]</span></p>
-<hr>
-</section>
-</section>
-<section id="models" class="level1">
-<h1>Models</h1>
-<section id="lda" class="level3">
-<h3 class="anchored" data-anchor-id="lda">LDA</h3>
-<ul>
-<li>Load count vectors and vocab<br>
-</li>
-<li>Train ten topic LDA model in scikit learn<br>
-</li>
-<li>Extract top words per topic and build word clouds</li>
-</ul>
-</section>
-<section id="lsa" class="level3">
-<h3 class="anchored" data-anchor-id="lsa">LSA</h3>
-<ul>
-<li>Load TFIDF vectors and vocab</li>
-<li>Fit ten topic Truncated SVD model with Normalizer<br>
-</li>
-<li>Extract top terms per component</li>
-</ul>
-</section>
-<section id="bertopic" class="level3">
-<h3 class="anchored" data-anchor-id="bertopic">BERTopic</h3>
-<ul>
-<li>Constructed a BERTopic instance with: SentenceTransformer embeddings</li>
-<li>Dimensionality Reduction (UMAP)</li>
-<li>Clustering (HDBSCAN)
-<ul>
-<li>Identify coherent groups of documents.</li>
-</ul></li>
-<li>Topic Extraction (c-TF-IDF)</li>
-<li>Generated interpretable topic representations → BERTopic’s representation model.</li>
-</ul>
-</section>
-<section id="eda" class="level2">
-<h2 class="anchored" data-anchor-id="eda">EDA</h2>
+<section id="eda" class="level3">
+<h3 class="anchored" data-anchor-id="eda">EDA</h3>
 <p align="center">
 <iframe src="./data/eda_results/plotly_rating_dist.html" width="800" height="500">
 </iframe>
 </p>
+<p>Figure 1</p>
 <p align="center">
 <iframe src="./data/eda_results/plotly_text_dist.html" width="800" height="500">
 </iframe>
 </p>
+<p>Figure 2</p>
 <p align="center">
 <iframe src="./data/eda_results/plotly_verified_purchase.html" width="800" height="500">
 </iframe>
 </p>
+<p>Figure 3</p>
 <p align="center">
 <iframe src="./data/eda_results/interactive_reviews_ratings_2023.html" width="800" height="500">
 </iframe>
 </p>
+<p>Figure 4</p>
 </section>
-<section id="results" class="level2">
-<h2 class="anchored" data-anchor-id="results">Results</h2>
+<section id="lda" class="level3">
+<h3 class="anchored" data-anchor-id="lda">LDA</h3>
+<p>Latent Dirichlet Allocation, LDA, identified ten topics from the All Beauty Amazon reviews. LDA treats each review as a mixture of topics. Each topic is defined by words that often appear together (Blei, Ng, and Jordan, 2003). The workflow queried the CountVectorizer matrix and vocabulary from S3, then loaded both locally. This ensured the model used the same token space created during preprocessing.</p>
+<p>Training used scikit-learn’s batch LDA with a fixed random seed for consistency. After training, the code extracted the highest-weight words for each topic from the component matrix. The pipeline also produced word clouds from these weights to support direct visual inspection and faster interpretation.</p>
+<p>All outputs were saved under data/lda_results. The directory includes count_vectors.npz, vocab.json, lda_topics.txt, and a wordclouds folder. These files store the trained topic structure, vocabulary mapping, top topic terms, and visual summaries used to assign clear, human-readable labels.</p>
+</section>
+<section id="lsa" class="level3">
+<h3 class="anchored" data-anchor-id="lsa">LSA</h3>
+<p>Latent Semantic Analysis (LSA), identified lower-dimensional topics in the All Beauty Amazon reviews. LSA applied Truncated SVD to the TFIDF matrix, which reduced sparse text features to dense semantic components (Deerwester et al, 1990). The workflow downloaded the TFIDF vectors and vocabulary from S3 and loaded the sparse matrix locally to keep the feature space aligned with the preprocessing step.</p>
+<p>The model used ten topics using scikit learn TruncatedSVD with a fixed random seed. The pipeline applied a Normalizer after SVD to produce stable document embeddings. After training, the code extracted the highest weight terms for each component from the SVD loadings. These terms highlighted the words that define each LSA dimension.</p>
+</section>
+<section id="bertopic" class="level3">
+<h3 class="anchored" data-anchor-id="bertopic">BERTopic</h3>
+</section>
+</section>
+<section id="analysis-results" class="level2">
+<h2 class="anchored" data-anchor-id="analysis-results">Analysis &amp; Results</h2>
 <section id="lda-1" class="level3">
 <h3 class="anchored" data-anchor-id="lda-1">LDA</h3>
+<p>Topic terms and themes for All Beauty reviews appear in the table. Each topic lists the highest-weight words from the LDA model. These words show the strongest signals in the count vector space. The table also includes a three-word theme for each topic. This theme summarizes the pattern suggested by the top words. The topics cover product areas such as hair tools, skin care, nails, grooming, and makeup. This view helps you link the numeric output of LDA to clear product themes in the review set.</p>
 <p align="center">
 <iframe src="./data/lda_results/ldatable.png" width="800" height="500">
 </iframe>
 </p>
-<p align="center">
-<iframe src="./data/lda_results/wordclouds/topic_0.png" width="800" height="500">
-</iframe>
-</p>
+<p>Figure 5</p>
 </section>
 <section id="lsa-1" class="level3">
 <h3 class="anchored" data-anchor-id="lsa-1">LSA</h3>
+<p>LSA topic terms and three word themes for All Beauty reviews appear in the table. Each topic lists the highest weight terms from the Truncated SVD model. These terms show the strongest signals in the TFIDF space. The themes point to clear patterns in the reviews. Several topics focus on hair care. Others focus on skin treatment, scented body products, or color cosmetics. A few topics reflect product quality or price concerns. These patterns show how LSA groups related words into broader semantic areas, which helps you read the main product themes present in the review set.</p>
 <p align="center">
 <iframe src="./data/lsa_results/lsatable.png" width="800" height="500">
 </iframe>
 </p>
-<p align="center">
-<iframe src="./data/lsa_results/topicdistribution.png" width="800" height="500">
-</iframe>
-</p>
+<p>Figure 6</p>
 </section>
 <section id="bertopic-1" class="level3">
 <h3 class="anchored" data-anchor-id="bertopic-1">BERTopic</h3>
@@ -305,6 +193,7 @@ x_j^{(d)} = \text{count}(v_j \in d)
 <iframe src="./data/bert_results/visuals/vis_topics_overview.html" width="850" height="600" style="border:none;">
 </iframe>
 </p>
+<p>Figure 7</p>
 </section>
 </section>
 <section id="model-performance-comparison" class="level2">
