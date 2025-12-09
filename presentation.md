@@ -29,7 +29,7 @@ A successful outcome is a fully implemented end-to-end pipeline:
 - LSA
 - BERTopic 
 
-Applied to Amaon Reviews → Produces a quantitative comparison using metrics such as:
+Applied to Amazon Reviews → Produces a quantitative comparison using metrics such as:
 
 - Topic coherence
 - Topic diversity
@@ -65,7 +65,7 @@ Applied to Amaon Reviews → Produces a quantitative comparison using metrics su
 
 ### LDA 
 
-### BERT 
+### BERTopic
 
 Model Initialization
 
