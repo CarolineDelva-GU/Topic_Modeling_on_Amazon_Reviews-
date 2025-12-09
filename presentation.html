@@ -34,6 +34,35 @@ ul.task-list li input[type="checkbox"] {
 <link href="presentation_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="presentation_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -95,11 +124,24 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="data" class="level2">
 <h2 class="anchored" data-anchor-id="data">Data</h2>
-<p><strong>Source:</strong> Amazon Reviews (Beauty Category)<br>
-<strong>Total Reviews:</strong> <em>701,528 (full dataset)</em><br>
-<strong>All Beauty subset:</strong> 632K users; 112K items;701K ratings <strong>Subset for BERTopic:</strong> <em>5,000 sampled reviews</em><br>
-<strong>Available fields include:</strong> - <code>rating</code> - <code>title</code> - <code>text</code> - <code>images</code> - <code>asin</code> - <code>parent_asin</code> - <code>user_id</code> - <code>timestamp</code> - <code>helpful_vote</code> - <code>verified_purchase</code></p>
-<p><em>Raw json files streamed, decompressed, and stored in S3</em></p>
+<p><strong>Source:</strong> Amazon Reviews USCD 2023 dataset</p>
+<p><strong>Total Reviews:</strong> <em>701,528 (full dataset)</em></p>
+<p><strong>All Beauty subset:</strong> <em>632K users; 112K items;701K ratings</em></p>
+<p><strong>Subset for BERTopic:</strong> <em>5,000 sampled reviews</em></p>
+<p><strong>Available fields include:</strong></p>
+<ul>
+<li><code>rating</code></li>
+<li><code>title</code></li>
+<li><code>text</code></li>
+<li><code>images</code></li>
+<li><code>asin</code></li>
+<li><code>parent_asin</code></li>
+<li><code>user_id</code></li>
+<li><code>timestamp</code></li>
+<li><code>helpful_vote</code></li>
+<li><code>verified_purchase</code></li>
+</ul>
+<p><em>Data collection: Raw json files, scraped, decompressed, and stored in S3</em></p>
 <hr>
 </section>
 </section>
@@ -150,16 +192,22 @@ ul.task-list li input[type="checkbox"] {
 </li>
 <li>At most 40K features<br>
 </li>
-<li>Frequency filters: <code>min_df=20</code>, <code>max_df=0.5</code></li>
+<li>Kept mid-frequency terms, removed rare words and overly common words.</li>
 </ul>
+<p><span class="math display">\[
+x_j^{(d)} = \text{count}(v_j \in d)
+\]</span></p>
 </section>
-<section id="tfidf-vectorization" class="level3">
-<h3 class="anchored" data-anchor-id="tfidf-vectorization">TFIDF Vectorization</h3>
+<section id="tf-idf-vectorization" class="level3">
+<h3 class="anchored" data-anchor-id="tf-idf-vectorization">TF-IDF Vectorization</h3>
 <ul>
 <li>Same text stream, token pattern, and stopwords as count model<br>
 </li>
-<li>TFIDF weights instead of raw counts</li>
+<li>TF-IDF weights instead of raw counts</li>
 </ul>
+<p><span class="math display">\[
+\text{tfidf}(v_j, d) = \text{tf}(v_j, d)\,\cdot\, \log\left(\frac{N}{\text{df}(v_j)}\right)
+\]</span></p>
 </section>
 <section id="sentence-embeddings" class="level3">
 <h3 class="anchored" data-anchor-id="sentence-embeddings">Sentence Embeddings</h3>
@@ -168,29 +216,31 @@ ul.task-list li input[type="checkbox"] {
 </li>
 <li>Batch encoding into dense embeddings</li>
 </ul>
+<p><span class="math display">\[
+\mathbf{e}_d = f_{\theta}\!\left(d\right)
+\]</span></p>
 <hr>
 </section>
 </section>
 <section id="models" class="level1">
 <h1>Models</h1>
-<section id="lsa" class="level3">
-<h3 class="anchored" data-anchor-id="lsa">LSA</h3>
-<ul>
-<li>Load TFIDF vectors and vocab from S3<br>
-</li>
-<li>Fit ten topic Truncated SVD model with Normalizer<br>
-</li>
-<li>Extract top terms per component</li>
-</ul>
-</section>
 <section id="lda" class="level3">
 <h3 class="anchored" data-anchor-id="lda">LDA</h3>
 <ul>
-<li>Load count vectors and vocab from S3<br>
+<li>Load count vectors and vocab<br>
 </li>
 <li>Train ten topic LDA model in scikit learn<br>
 </li>
 <li>Extract top words per topic and build word clouds</li>
+</ul>
+</section>
+<section id="lsa" class="level3">
+<h3 class="anchored" data-anchor-id="lsa">LSA</h3>
+<ul>
+<li>Load TFIDF vectors and vocab</li>
+<li>Fit ten topic Truncated SVD model with Normalizer<br>
+</li>
+<li>Extract top terms per component</li>
 </ul>
 </section>
 <section id="bertopic" class="level3">
