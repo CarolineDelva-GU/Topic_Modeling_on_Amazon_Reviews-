@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.5.56">
+<meta name="generator" content="quarto-1.5.54">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -93,24 +93,105 @@ ul.task-list li input[type="checkbox"] {
 <hr>
 </section>
 </section>
-<section id="data-you-can-change-this-it-was-just-a-filler" class="level2">
-<h2 class="anchored" data-anchor-id="data-you-can-change-this-it-was-just-a-filler">Data (You can change this it was just a filler)</h2>
+<section id="data" class="level2">
+<h2 class="anchored" data-anchor-id="data">Data</h2>
 <p><strong>Source:</strong> Amazon Reviews (Beauty Category)<br>
 <strong>Total Reviews:</strong> <em>701,528 (full dataset)</em><br>
-<strong>Subset for BERTopic:</strong> <em>5,000 sampled reviews</em></p>
-<p><strong>Available fields include:</strong> - <code>rating</code> - <code>title</code> - <code>text</code> - <code>images</code> - <code>asin</code> - <code>parent_asin</code> - <code>user_id</code> - <code>timestamp</code> - <code>helpful_vote</code> - <code>verified_purchase</code></p>
+<strong>All Beauty subset:</strong> 632K users; 112K items;701K ratings <strong>Subset for BERTopic:</strong> <em>5,000 sampled reviews</em><br>
+<strong>Available fields include:</strong> - <code>rating</code> - <code>title</code> - <code>text</code> - <code>images</code> - <code>asin</code> - <code>parent_asin</code> - <code>user_id</code> - <code>timestamp</code> - <code>helpful_vote</code> - <code>verified_purchase</code></p>
+<p><em>Raw json files streamed, decompressed, and stored in S3</em></p>
 <hr>
-<section id="data-preprocessing" class="level3">
-<h3 class="anchored" data-anchor-id="data-preprocessing">Data Preprocessing</h3>
 </section>
-<section id="data-transformation" class="level3">
-<h3 class="anchored" data-anchor-id="data-transformation">Data Transformation</h3>
 </section>
+<section id="data-preprocessing" class="level1">
+<h1>Data Preprocessing</h1>
+<section id="data-cleaning" class="level3">
+<h3 class="anchored" data-anchor-id="data-cleaning">Data Cleaning</h3>
+<ul>
+<li>Lowercased text, removed URLs, usernames, punctuation, extra white space, and non ASCII characters</li>
+</ul>
+</section>
+<section id="ner-redaction" class="level3">
+<h3 class="anchored" data-anchor-id="ner-redaction">NER Redaction</h3>
+<ul>
+<li>spaCy <code>en_core_web_sm</code> named entity detection<br>
+</li>
+<li>Replace people, organizations, locations with tags
+<ul>
+<li><code>[PERSON]</code>, <code>[ORG]</code>, <code>[LOCATION]</code></li>
+</ul></li>
+</ul>
+</section>
+<section id="stopwords-removal" class="level3">
+<h3 class="anchored" data-anchor-id="stopwords-removal">Stopwords Removal</h3>
+<ul>
+<li>Keep alphabetic tokens with length at least three<br>
+</li>
+<li>Remove extended stopword list
+<ul>
+<li>scikit learn English<br>
+</li>
+<li>NLTK stopwords<br>
+</li>
+<li>HTML artifacts<br>
+</li>
+<li>Specific words such as “great” and “product”</li>
+</ul></li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="data-transformation" class="level1">
+<h1>Data Transformation</h1>
+<section id="count-vectorization" class="level3">
+<h3 class="anchored" data-anchor-id="count-vectorization">Count Vectorization</h3>
+<ul>
+<li>Unigrams and bigrams<br>
+</li>
+<li>At most 40K features<br>
+</li>
+<li>Frequency filters: <code>min_df=20</code>, <code>max_df=0.5</code></li>
+</ul>
+</section>
+<section id="tfidf-vectorization" class="level3">
+<h3 class="anchored" data-anchor-id="tfidf-vectorization">TFIDF Vectorization</h3>
+<ul>
+<li>Same text stream, token pattern, and stopwords as count model<br>
+</li>
+<li>TFIDF weights instead of raw counts</li>
+</ul>
+</section>
+<section id="sentence-embeddings" class="level3">
+<h3 class="anchored" data-anchor-id="sentence-embeddings">Sentence Embeddings</h3>
+<ul>
+<li>SentenceTransformer model such as <code>all-MiniLM-L6-v2</code><br>
+</li>
+<li>Batch encoding into dense embeddings</li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="models" class="level1">
+<h1>Models</h1>
 <section id="lsa" class="level3">
 <h3 class="anchored" data-anchor-id="lsa">LSA</h3>
+<ul>
+<li>Load TFIDF vectors and vocab from S3<br>
+</li>
+<li>Fit ten topic Truncated SVD model with Normalizer<br>
+</li>
+<li>Extract top terms per component</li>
+</ul>
 </section>
 <section id="lda" class="level3">
 <h3 class="anchored" data-anchor-id="lda">LDA</h3>
+<ul>
+<li>Load count vectors and vocab from S3<br>
+</li>
+<li>Train ten topic LDA model in scikit learn<br>
+</li>
+<li>Extract top words per topic and build word clouds</li>
+</ul>
 </section>
 <section id="bertopic" class="level3">
 <h3 class="anchored" data-anchor-id="bertopic">BERTopic</h3>
@@ -126,23 +207,22 @@ ul.task-list li input[type="checkbox"] {
 <li>Generated interpretable topic representations → BERTopic’s representation model.</li>
 </ul>
 </section>
-</section>
 <section id="eda" class="level2">
 <h2 class="anchored" data-anchor-id="eda">EDA</h2>
 <p align="center">
-<iframe src="../data/eda_results/plotly_rating_dist.html" width="800" height="500">
+<iframe src="./data/eda_results/plotly_rating_dist.html" width="800" height="500">
 </iframe>
 </p>
 <p align="center">
-<iframe src="../data/eda_results/plotly_text_dist.html" width="800" height="500">
+<iframe src="./data/eda_results/plotly_text_dist.html" width="800" height="500">
 </iframe>
 </p>
 <p align="center">
-<iframe src="../data/eda_results/plotly_verified_purchase.html" width="800" height="500">
+<iframe src="./data/eda_results/plotly_verified_purchase.html" width="800" height="500">
 </iframe>
 </p>
 <p align="center">
-<iframe src="../data/eda_results/interactive_reviews_ratings_2023.html" width="800" height="500">
+<iframe src="./data/eda_results/interactive_reviews_ratings_2023.html" width="800" height="500">
 </iframe>
 </p>
 </section>
@@ -150,14 +230,30 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="results">Results</h2>
 <section id="lda-1" class="level3">
 <h3 class="anchored" data-anchor-id="lda-1">LDA</h3>
+<p align="center">
+<iframe src="./data/lda_results/ldatable.png" width="800" height="500">
+</iframe>
+</p>
+<p align="center">
+<iframe src="./data/lda_results/wordclouds/topic_0.png" width="800" height="500">
+</iframe>
+</p>
 </section>
 <section id="lsa-1" class="level3">
 <h3 class="anchored" data-anchor-id="lsa-1">LSA</h3>
+<p align="center">
+<iframe src="./data/lsa_results/lsatable.png" width="800" height="500">
+</iframe>
+</p>
+<p align="center">
+<iframe src="./data/lsa_results/topicdistribution.png" width="800" height="500">
+</iframe>
+</p>
 </section>
 <section id="bertopic-1" class="level3">
 <h3 class="anchored" data-anchor-id="bertopic-1">BERTopic</h3>
 <p align="center">
-<iframe src="/data/bert_results/visuals/vis_topics_overview.html" width="850" height="600" style="border:none;">
+<iframe src="./data/bert_results/visuals/vis_topics_overview.html" width="850" height="600" style="border:none;">
 </iframe>
 </p>
 </section>
@@ -242,7 +338,7 @@ ul.task-list li input[type="checkbox"] {
 <section id="conclusion" class="level2">
 <h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
 <p align="center">
-<img src="../data/bert_results/visuals/conclusion_flowchart.png" width="700">
+<img src="./data/bert_results/visuals/conclusion_flowchart.png" width="700">
 </p>
 </section>
 </section>
