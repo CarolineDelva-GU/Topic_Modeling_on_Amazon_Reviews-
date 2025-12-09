@@ -1,4 +1,6 @@
-#   Beyond LDA: A Comparative Analysis of Topic Modeling on Amazon Reviews
+# Beyond LDA: A Comparative Analysis of Topic Modeling on Amazon Reviews
+
+
 ### **Team Members:** Caroline Delva · Amina Nsanza  
 ---
 
@@ -74,15 +76,10 @@ Model Initialization
 - Clustering (HDBSCAN)
     - Identify coherent groups of documents. 
 - Topic Extraction (c-TF-IDF)
-- Generated interpretable topic representations →  BERTopic’s representation model.
+- Generated interpretable topic representations → BERTopic’s representation model.
 
 
 ## EDA 
-
-data/eda_results/plotly_rating_dist.html
-data/eda_results/plotly_text_dist.html
-data/eda_results/plotly_verified_purchase.html
-data/eda_results/interactive_reviews_ratings_2023.html
 
 <p align="center">
   <iframe src="../data/eda_results/plotly_rating_dist.html" width="800" height="500"></iframe>
@@ -100,3 +97,82 @@ data/eda_results/interactive_reviews_ratings_2023.html
   <iframe src="../data/eda_results/interactive_reviews_ratings_2023.html" width="800" height="500"></iframe>
 </p>
 
+
+## Results 
+
+### LDA 
+
+### LSA 
+
+### BERTopic 
+
+
+<p align="center">
+  <iframe src="/data/bert_results/visuals/vis_topics_overview.html"
+          width="850"
+          height="600"
+          style="border:none;">
+  </iframe>
+</p>
+
+
+
+
+
+## Model Performance & Comparison 
+
+Topic Coherence: 
+
+  - Assesses how meaningful & interpretable each topic is. 
+  - Ensures that the top words within a topic have a logically connected theme.
+  
+Topic Diversity: 
+
+  - Measures how distinct the topics are from one another.
+  - Ensures that a model captures a wide range of themes instead of redundant or overlapping topics.
+
+Silhouette Score  (Clustering Performance): 
+
+- Evaluates how well the model groups similar reviews together,
+- Validates that topics reflect real structure in customer feedback.
+
+
+#### Topic Model Evaluation Comparison
+
+| Model     | Topic Coherence (c_v) | Topic Diversity | Silhouette Score (Cluster Performance) |
+|-----------|------------------------|-----------------|----------------------------------------|
+| **LDA**        | 0.3000                 | **0.83**           | **0.4563**                               |
+| **LSA**        | 0.3058                 | 0.47            | -0.0265                                 |
+| **BERTopic**   | **0.4204**             | 0.6384         | 0.0502                                  |
+
+
+Across all three BERTopic performs best on topic coherence. 
+
+- Discovered themes that are generally more semantically meaningful and internally consistent 
+- aligns with expectations → relies on dense sentence embeddings instead of raw word counts.
+
+On topic diversity, LDA comes out strongest →  a wider spread of unique top words across topics. 
+
+- Better at separating themes distinctly, even if the topics themselves aren’t as coherent. 
+- LSA struggled → overlapping, less interpretable topics.
+
+For cluster performance, that ws measured by silhouette score, LDA again performs the best. 
+- BERTopic’s silhouette score was weak 
+- LSA's poor score → clusters are weakly formed but directionally sensible.
+
+**BERTopic**  was the strongest model for **interpretability** and semantic quality, while **LDA** is the strongest for **structural separation** and topic distinctiveness. LSA consistently underperforms across metrics.
+
+#### WHAT TO MODEL TO USE.....
+
+- If you want meaningful, human-like topic themes →  **BERTopic**.
+- If you need sharply separated clusters → **LDA** is better.
+
+Overall BERTopic did outperform the baseline models on topic coherence so texts such as reviews, the model would be better and capturing real semantic structure. 
+
+
+## Conclusion 
+
+
+<p align="center">
+  <img src="../data/bert_results/visuals/conclusion_flowchart.png" width="700">
+</p>
