@@ -16,19 +16,24 @@ Discover meaningful topics from large amounts of unstructured text and evaluate 
 
 ### Why It Matters
 
-- Widely used method in the industry today to tackle various challenges and to  better understand human behavior. 
--  Different models -> different fundamental approaches 
--  (tab) Understand how each works and compare them. one-size =/ fits-all solution. 
-- By comparing ->  we can identify which ones work best on customer feedback. 
+- Topic modeling is widely used in the industry to analyze text and better understand human behavior
+-  Different models → different fundamental approaches 
+    - Understand how each works and compare them. one-size ≠ fits-all solution. 
+- By comparing → we can identify which ones work best on customer feedback. 
 -  Assist businesses in improving their products and services. Additionally, it can show how transformer-based models can improve modeling and help individuals assess which methods work better.
 
 ### Desired Outcome
 A successful outcome is a fully implemented end-to-end pipeline:
-    LDA + LSA, +  a BERT-based topic model on the Amazon Reviews dataset ->  produces a quantitative comparison using metrics such as:
 
-    Topic coherence
-    Topic diversity
-    Clustering performance
+- LDA 
+- LSA
+- BERTopic 
+
+Applied to Amaon Reviews → Produces a quantitative comparison using metrics such as:
+
+- Topic coherence
+- Topic diversity
+- Clustering performance
 
 
 ---
@@ -64,20 +69,34 @@ A successful outcome is a fully implemented end-to-end pipeline:
 
 Model Initialization
 
-    Constructed a BERTopic instance with:  SentenceTransformer embeddings from the steps above
-        So embedding_model=None
-
-Dimensionality Reduction (UMAP) 
-
-Clustering (HDBSCAN)
-    Identify coherent groups of documents. 
-
-Topic Extraction (c-TF-IDF) to extract topwords 
-
-Generated interpretable topic representations ->  BERTopic’s representation model.
+- Constructed a BERTopic instance with:  SentenceTransformer embeddings
+- Dimensionality Reduction (UMAP) 
+- Clustering (HDBSCAN)
+    - Identify coherent groups of documents. 
+- Topic Extraction (c-TF-IDF)
+- Generated interpretable topic representations →  BERTopic’s representation model.
 
 
 ## EDA 
 
+data/eda_results/plotly_rating_dist.html
+data/eda_results/plotly_text_dist.html
+data/eda_results/plotly_verified_purchase.html
+data/eda_results/interactive_reviews_ratings_2023.html
 
+<p align="center">
+  <iframe src="../data/eda_results/plotly_rating_dist.html" width="800" height="500"></iframe>
+</p>
+
+<p align="center">
+  <iframe src="../data/eda_results/plotly_text_dist.html" width="800" height="500"></iframe>
+</p>
+
+<p align="center">
+  <iframe src="../data/eda_results/plotly_verified_purchase.html" width="800" height="500"></iframe>
+</p>
+
+<p align="center">
+  <iframe src="../data/eda_results/interactive_reviews_ratings_2023.html" width="800" height="500"></iframe>
+</p>
 
