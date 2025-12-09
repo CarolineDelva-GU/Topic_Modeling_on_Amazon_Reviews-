@@ -137,19 +137,19 @@ Model Initialization
 ## EDA 
 
 <p align="center">
-  <iframe src="../data/eda_results/plotly_rating_dist.html" width="800" height="500"></iframe>
+  <iframe src="./data/eda_results/plotly_rating_dist.html" width="800" height="500"></iframe>
 </p>
 
 <p align="center">
-  <iframe src="../data/eda_results/plotly_text_dist.html" width="800" height="500"></iframe>
+  <iframe src="./data/eda_results/plotly_text_dist.html" width="800" height="500"></iframe>
 </p>
 
 <p align="center">
-  <iframe src="../data/eda_results/plotly_verified_purchase.html" width="800" height="500"></iframe>
+  <iframe src="./data/eda_results/plotly_verified_purchase.html" width="800" height="500"></iframe>
 </p>
 
 <p align="center">
-  <iframe src="../data/eda_results/interactive_reviews_ratings_2023.html" width="800" height="500"></iframe>
+  <iframe src="./data/eda_results/interactive_reviews_ratings_2023.html" width="800" height="500"></iframe>
 </p>
 
 
@@ -158,22 +158,22 @@ Model Initialization
 ### LDA 
 
 <p align="center">
-  <iframe src="../data/lda_results/ldatable.png" width="800" height="500"></iframe>
+  <iframe src="./data/lda_results/ldatable.png" width="800" height="500"></iframe>
 </p>
 
 <p align="center">
-  <iframe src="../data/lda_results/wordclouds/topic_0.png" width="800" height="500"></iframe>
+  <iframe src="./data/lda_results/wordclouds/topic_0.png" width="800" height="500"></iframe>
 </p>
 
 
 ### LSA 
 
 <p align="center">
-  <iframe src="../data/lsa_results/lsatable.png" width="800" height="500"></iframe>
+  <iframe src="./data/lsa_results/lsatable.png" width="800" height="500"></iframe>
 </p>
 
 <p align="center">
-  <iframe src="../data/lsa_results/topicdistribution.png" width="800" height="500"></iframe>
+  <iframe src="./data/lsa_results/topicdistribution.png" width="800" height="500"></iframe>
 </p>
 
 
@@ -181,7 +181,7 @@ Model Initialization
 
 
 <p align="center">
-  <iframe src="/data/bert_results/visuals/vis_topics_overview.html"
+  <iframe src="./data/bert_results/visuals/vis_topics_overview.html"
           width="850"
           height="600"
           style="border:none;">
@@ -247,5 +247,5 @@ Overall BERTopic did outperform the baseline models on topic coherence so texts 
 
 
 <p align="center">
-  <img src="../data/bert_results/visuals/conclusion_flowchart.png" width="700">
+  <img src="./data/bert_results/visuals/conclusion_flowchart.png" width="700">
 </p>
