@@ -99,8 +99,8 @@ div.csl-indent {
 </header>
 
 
-<section id="i.-introduction" class="level2">
-<h2 class="anchored" data-anchor-id="i.-introduction">I. Introduction</h2>
+<section id="i.-introduction" class="level1">
+<h1>I. Introduction</h1>
 <p>Topic modeling is one of the most widely used techniques in the industry today, from technology to health and marketing; it provides powerful tools that assist in organizing and understanding themes in large unstructured text data. This type of modeling automatically discovers meaningful subjects within documents, and enables businesses to better understand conversational structures, uncover common themes, and gain insights into human behavior. Although topic modeling is the most popular approach to understanding human behavior, there are fundamental differences in the multiple methods of topic modeling, which range from probabilistic and dimensional reduction techniques, embedding-based methods, indicating that there is no single solution that is a one-size-fits-all.</p>
 <p>This project explores a comparative analysis of three of the main topic modeling methods today: Latent Dirichlet Allocation (LDA), Latent Semantic Analysis (LSA), and a BERT-based transformer model (BERTopic). This comparison is critical because all of these models use fundamentally different methodologies for processing text and uncovering the themes in it. The main objective is to evaluate and compare how well these models perform in discovering meaningful topics from an Amazon Reviews dataset. The performance metrics that will be used to measure success are: Topic coherence, Topic diversity, and Clustering performance through Silhouette score. These performance metrics will assess the models’ ability to capture how meaningful and interpretable each topic is and whether top words within a topic have a logically connected theme. Additionally, they measure how distinct the topics are from one another and if a wide range of themes is captured, rather than redundant and overlapping topics. Finally, the metrics will evaluate how well a model groups similar reviews together and validate that topics reflect real structure in customer feedback.</p>
 <hr>
@@ -112,8 +112,9 @@ div.csl-indent {
 <p>Presently, there are modern contextual topic modeling approaches, such as BERTopic, this model addresses the challenges that were faced by LDA and LSA by completely moving away from the word-frequency statistics method to instead using rich document embeddings based representations <span class="citation" data-cites="grootendorst2022bertopic">(<a href="#ref-grootendorst2022bertopic" role="doc-biblioref">Grootendorst 2022</a>)</span>. The BERTopic model is able to achieve this by using other pretrained language models like the baseline the Sentence-BERT. The language based transformer converts documents into rich dense embeddings. These embeddings from Sentence-Bert are then later used to uncover semantics, this is done through the encoding of semantic meaning. Additionally, BERTopic tops LDA and LSA, because it is able to use the encodings and generate natural clusters where, similar general ideas/themes are pulled together. These idea clusters (topics) are created in a reduced vector space, that is made by UMAP dimensionality reduction, and the clusters are formed through HDBSCAN. To incorporate semantic meaning and topic interpratation, the model uses a class based procedure (c-TF-IDF) that interprets topic descriptions as well as balances semantics with interpretability <span class="citation" data-cites="grootendorst2022bertopic">(<a href="#ref-grootendorst2022bertopic" role="doc-biblioref">Grootendorst 2022</a>)</span>.</p>
 <p>Therefore, through this literature review, we can see that contextual approaches capture more coherent topics; however, they do this by relying on baseline models and offer hybrid structures that differ from single source models. The difference in the methodologies of these models make direct comparison critical. Classic models offer simplicity and efficiency, whereas modern contextual models provide stronger semantic modeling in return; however, they may come at a computational cost. This is why conducting a side by side evaluation is meaningful, so we can obtain a deeper understanding of how each of the models’ approach affect topic quality, coherence, and practical usefulness.</p>
 <hr>
-<section id="iii.-methods" class="level2">
-<h2 class="anchored" data-anchor-id="iii.-methods">III. Methods</h2>
+</section>
+<section id="iii.-methods" class="level1">
+<h1>III. Methods</h1>
 <p>This study was run on an EC2 instance and used an S3 bucket as storage so that the analysis could be automated. Each step retrieved the resulting files from the previous step and dumped the new resulting files into a subfolder of the S3 bucket. That well-aligned data pipeline ensured that the analysis can be reproduced seamlessly without the limitation of local storage.</p>
 <section id="a.-data-collection" class="level4">
 <h4 class="anchored" data-anchor-id="a.-data-collection">A. Data Collection</h4>
@@ -128,7 +129,7 @@ div.csl-indent {
 </section>
 <section id="named-entity-recognition-redaction" class="level5">
 <h5 class="anchored" data-anchor-id="named-entity-recognition-redaction">2. Named Entity Recognition Redaction</h5>
-<p>NER, which is the NLP process of recognizing known entities from text and replacing them with tags, was then conducted. The model used for this process is spaCy’s en_core_web_sm model. For example, detected people, organizations, locations, and other entity types were replaced with tags like [PERSON], [ORG], and [LOCATION]. By doing so, NER prevents the model from creating topics around specific entities. The clean file was written to a temporary file and then uploaded to the amazon_clean/S3 subfolder.</p>
+<p>NER, which is the NLP process of recognizing known entities from text and replacing them with tags, was conducted. The model used for this process is spaCy’s en_core_web_sm model. For example, detected people, organizations, locations, and other entity types were replaced with tags like [PERSON], [ORG], and [LOCATION]. By doing so, NER prevents the model from creating topics around specific entities. The clean file was written to a temporary file and then uploaded to the amazon_clean/S3 subfolder.</p>
 </section>
 <section id="text-preprocessing" class="level5">
 <h5 class="anchored" data-anchor-id="text-preprocessing">3. Text Preprocessing</h5>
@@ -151,8 +152,28 @@ div.csl-indent {
 <p>Dense sentence embeddings were created using the build_embeddings class method by loading the SentenceTransformer all-MiniLM-L6-v2. The model encoded the clean text in batches of 64 into a fixed-size NumPy array of embeddings. The array was saved as embeddings.npy and uploaded to amazon_vectors/embeddings/S3 subfolder.</p>
 </section>
 </section>
-<section id="d.-exploratory-data-analysis" class="level4">
-<h4 class="anchored" data-anchor-id="d.-exploratory-data-analysis">D. Exploratory Data Analysis</h4>
+<section id="e.-modeling" class="level4">
+<h4 class="anchored" data-anchor-id="e.-modeling">E. Modeling</h4>
+<p>The fifth step in the pipeline was the training of the three selected topic models, Latent Dirichlet Allocation, Latent Semantic Analysis, and Bidirectional Encoder Representations from Transformers Topic. The three models used the three types of vectors as input and provided insights on how these models would perform. Each model outputted 10 topics. Graphs were also generated to better understand the result. The outputs of each model were saved in the data/ local folder.</p>
+<section id="latent-dirichlet-allocation" class="level5">
+<h5 class="anchored" data-anchor-id="latent-dirichlet-allocation">1. Latent Dirichlet Allocation</h5>
+<p>A Latent Dirichlet Allocation (LDA) model from scikit-learn was fitted to the previously saved All Beauty Amazon reviews count vectors to generate 10 topics. As the literature has established LDA treats each document as a mix of topics, and each topic as a group of words that often appear together <span class="citation" data-cites="blei2003lda">(<a href="#ref-blei2003lda" role="doc-biblioref">Blei, Ng, and Jordan 2003</a>)</span>.</p>
+<p>The model’s parameters consisted of batch processing with a random seed for consistency. The 10 topics were considered by the words that received the highest weights. The resulting files were a text file of the generated topics, the trained model and a JSON file of the corpus’ vocabulary. In sum, the directory included count_vectors.npz, vocab.json, lda_topics.txt, and a wordclouds folder. Each set of words were later interpreted as short phrases so that they can be easily understood. Word clouds were generated to better understand the weight of each word in a topic as the words with the highest weights appear bigger than the others. All outputs were saved locally under the data/lda_results folder. These outputs would later be evaluated to determine the LDA model’s performance as compared to the other two models.</p>
+</section>
+<section id="latent-semantic-analysis" class="level5">
+<h5 class="anchored" data-anchor-id="latent-semantic-analysis">2. Latent Semantic Analysis</h5>
+<p>Latent Semantic Analysis (LSA), identified lower-dimensional topics in the All Beauty Amazon reviews. LSA applied Truncated SVD to the TF-IDF matrix, which reduced sparse text features to dense semantic components <span class="citation" data-cites="deerwester1990lsa">(<a href="#ref-deerwester1990lsa" role="doc-biblioref">Deerwester et al. 1990</a>)</span>. The workflow downloaded the TF-IDF vectors and vocabulary from S3 and loaded the sparse matrix locally to keep the feature space aligned with the preprocessing step.</p>
+<p>The model used ten topics using scikitlearn TruncatedSVD with a fixed random seed. The pipeline applied a Normalizer after SVD to produce stable document embeddings. After training, the code extracted the highest weight terms for each component from the SVD loadings. These terms highlighted the words that define each LSA dimension.</p>
+</section>
+<section id="bidirectional-encoder-representations-from-transformers-bertopic" class="level5">
+<h5 class="anchored" data-anchor-id="bidirectional-encoder-representations-from-transformers-bertopic">3. Bidirectional Encoder Representations from Transformers BERTopic</h5>
+<hr>
+</section>
+</section>
+<section id="iv.-results" class="level2">
+<h2 class="anchored" data-anchor-id="iv.-results">IV. Results</h2>
+<section id="a.-exploratory-data-analysis" class="level3">
+<h3 class="anchored" data-anchor-id="a.-exploratory-data-analysis">A. Exploratory Data Analysis</h3>
 <p align="center">
 <iframe src="./data/eda_results/plotly_rating_dist.html" width="800" height="500">
 </iframe>
@@ -182,29 +203,8 @@ Figure 4: Monthly Trends in Beauty Amazon Reviews and Average Ratings
 </figcaption>
 <p></p>
 </section>
-<section id="e.-modeling" class="level4">
-<h4 class="anchored" data-anchor-id="e.-modeling">E. Modeling</h4>
-<p>The fifth step in the pipeline was the training of the three selected topic models, Latent Dirichlet Allocation, Latent Semantic Analysis, and Bidirectional Encoder Representations from Transformers Topic. The three models used the three types of vectors as input and provided insights on how these models would perform. Each model outputted 10 topics. Graphs were also generated to better understand the result. The outputs of each model were saved in the data/ local folder.</p>
-<section id="latent-dirichlet-allocation" class="level5">
-<h5 class="anchored" data-anchor-id="latent-dirichlet-allocation">1. Latent Dirichlet Allocation</h5>
-<p>A Latent Dirichlet Allocation (LDA) model from scikit-learn was fitted to the previously saved All Beauty Amazon reviews count vectors to generate 10 topics. As the literature has established LDA treats each document as a mix of topics, and each topic as a group of words that often appear together <span class="citation" data-cites="blei2003lda">(<a href="#ref-blei2003lda" role="doc-biblioref">Blei, Ng, and Jordan 2003</a>)</span>.</p>
-<p>The model’s parameters consisted of batch processing with a random seed for consistency. The 10 topics were considered by the words that received the highest weights. The resulting files were a text file of the generated topics, the trained model and a JSON file of the corpus’ vocabulary. In sum, the directory included count_vectors.npz, vocab.json, lda_topics.txt, and a wordclouds folder. Each set of words were later interpreted as short phrases so that they can be easily understood. Word clouds were generated to better understand the weight of each word in a topic as the words with the highest weights appear bigger than the others. All outputs were saved locally under the data/lda_results folder. These outputs would later be evaluated to determine the LDA model’s performance as compared to the other two models.</p>
-</section>
-<section id="latent-semantic-analysis" class="level5">
-<h5 class="anchored" data-anchor-id="latent-semantic-analysis">2. Latent Semantic Analysis</h5>
-<p>Latent Semantic Analysis (LSA), identified lower-dimensional topics in the All Beauty Amazon reviews. LSA applied Truncated SVD to the TF-IDF matrix, which reduced sparse text features to dense semantic components <span class="citation" data-cites="deerwester1990lsa">(<a href="#ref-deerwester1990lsa" role="doc-biblioref">Deerwester et al. 1990</a>)</span>. The workflow downloaded the TF-IDF vectors and vocabulary from S3 and loaded the sparse matrix locally to keep the feature space aligned with the preprocessing step.</p>
-<p>The model used ten topics using scikitlearn TruncatedSVD with a fixed random seed. The pipeline applied a Normalizer after SVD to produce stable document embeddings. After training, the code extracted the highest weight terms for each component from the SVD loadings. These terms highlighted the words that define each LSA dimension.</p>
-</section>
-<section id="bidirectional-encoder-representations-from-transformers-bertopic" class="level5">
-<h5 class="anchored" data-anchor-id="bidirectional-encoder-representations-from-transformers-bertopic">3. Bidirectional Encoder Representations from Transformers BERTopic</h5>
-<hr>
-</section>
-</section>
-</section>
-<section id="iv.-results" class="level2">
-<h2 class="anchored" data-anchor-id="iv.-results">IV. Results</h2>
-<section id="a.-latent-dirichlet-analysis" class="level3">
-<h3 class="anchored" data-anchor-id="a.-latent-dirichlet-analysis">A. Latent Dirichlet Analysis</h3>
+<section id="b.-latent-dirichlet-analysis" class="level3">
+<h3 class="anchored" data-anchor-id="b.-latent-dirichlet-analysis">B. Latent Dirichlet Analysis</h3>
 <p>The 10 topics generated by the LDA model were consistent with the beauty product theme of the dataset. As the top weighted words were considered to be the topics, each set of words can be easily characterized as a beauty product category. For example, as seen in the LDA topics table below, the first topic included words such as “hair”, “iron”, “heat” , which can easily be interpreted as heat styling tools. The second topic included words such as “brush”, “quality”, “bristle”, which can be interpreted as brush set quality. Overall, the topics reflected a very specific category of the beauty theme as some topic was about eye products and the other was about foot products.</p>
 <p align="center">
 <iframe src="./data/lda_results/ldatable.png" width="800" height="500">
@@ -222,8 +222,8 @@ Figure 6: LDA topic 0 wordcloud
 </figcaption>
 <p></p>
 </section>
-<section id="b.-latent-semantic-analysis" class="level3">
-<h3 class="anchored" data-anchor-id="b.-latent-semantic-analysis">B. Latent Semantic Analysis</h3>
+<section id="c.-latent-semantic-analysis" class="level3">
+<h3 class="anchored" data-anchor-id="c.-latent-semantic-analysis">C. Latent Semantic Analysis</h3>
 <p>The 10 generated topics from the LSA model were also consistent with the beauty product theme of the dataset. These words were considered the highest signals of the TF-IDF space. However, although the topics were interpreted as phrases, the separation of the beauty categories of the topics were not as distinct as the LDA. For example, the first topic included words such as “hair”, “skin” and “face”, which can place this category in all three beauty product categories. The second topic was more consistent with a curly hair care topic. The third topic included words such as “hair”, “skin” and “face”, which can again describe the three categories for beauty products.</p>
 <p align="center">
 <iframe src="./data/lsa_results/lsatable.png" width="800" height="500">
@@ -241,8 +241,8 @@ Figure 8: Distribution of LSA Topic Strengths Across All Documents
 </figcaption>
 <p></p>
 </section>
-<section id="c.-bertopic" class="level3">
-<h3 class="anchored" data-anchor-id="c.-bertopic">C. BERTopic</h3>
+<section id="d.-bertopic" class="level3">
+<h3 class="anchored" data-anchor-id="d.-bertopic">D. BERTopic</h3>
 <p align="center">
 <iframe src="./data/bert_results/visuals/vis_topics_overview.html" width="850" height="600" style="border:none;">
 </iframe>
