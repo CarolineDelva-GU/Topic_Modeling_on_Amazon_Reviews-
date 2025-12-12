@@ -10,30 +10,9 @@
 
 ##  Introduction 
 
-### Task
+Topic modeling is one of the most widely used techniques in the industry today, from technology to health and marketing; it provides powerful tools that assist in organizing and understanding themes in large unstructured text data. This type of modeling automatically discovers meaningful subjects within documents, and enables businesses to better understand conversational structures, uncover common themes, and gain insights into human behavior. Although topic modeling is the most popular approach to understanding human behavior, there are fundamental differences in the multiple methods of topic modeling, which range from probabilistic and dimensional reduction techniques, embedding-based methods, indicating that there is no single solution that is a one-size-fits-all. 
+This project explores a comparative analysis of three of the main topic modeling methods today: Latent Dirichlet Allocation (LDA), Latent Semantic Analysis (LSA), and a BERT-based transformer model (BERTopic). This comparison is critical because all of these models use fundamentally different methodologies for processing text and uncovering the themes in it.  The main objective is to evaluate and compare how well these models perform in discovering meaningful topics from an Amazon Reviews dataset. The performance metrics that will be used to measure success are: Topic coherence, Topic diversity, and Clustering performance through Silhouette score. These performance metrics will assess the models’ ability to capture how meaningful and interpretable each topic is and whether top words within a topic have a logically connected theme. Additionally, they measure how distinct the topics are from one another and if a wide range of themes is captured, rather than redundant and overlapping topics. Finally, the metrics will evaluate how well a model groups similar reviews together and validate that topics reflect real structure in customer feedback.
 
-Discover meaningful topics from large amounts of unstructured text and evaluate how classical statistical models compare to modern transformer-based approaches in terms of **topic quality**, coherence, and interpretability. 
-
-### Why It Matters
-
-- Topic modeling is widely used in the industry to analyze text and better understand human behavior
--  Different models → different fundamental approaches 
-    - Understand how each works and compare them. one-size ≠ fits-all solution. 
-- By comparing → we can identify which ones work best on customer feedback. 
--  Assist businesses in improving their products and services. Additionally, it can show how transformer-based models can improve modeling and help individuals assess which methods work better.
-
-### Desired Outcome
-A successful outcome is a fully implemented end-to-end pipeline:
-
-- LDA 
-- LSA
-- BERTopic 
-
-Applied to Amazon Reviews → Produces a quantitative comparison using metrics such as:
-
-- Topic coherence
-- Topic diversity
-- Clustering performance
 
 
 # Literature Review 
