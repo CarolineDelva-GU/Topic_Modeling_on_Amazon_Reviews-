@@ -38,7 +38,7 @@ This study was run on an EC2 instance and used an S3 bucket as storage so that t
 
 #### A. Data Collection 
 
-The first step of the pipeline was data collection as the JSON files were scraped  from the University of California San Diego Amazon Reviews 2023 website [@amazonreviews2023] (UCSD Amazon Reviews 2023, 2023). The university’s source index page contained multiple JSON.gz files separated by product category such as all_beauty, disks, movies_and_tv etc. All files were later dumped into the S3 bucket subfolder, amazon_raw/S3 so that the files were not stored locally as each file contained more than 1 million records thus were incredibly large. 
+The first step of the pipeline was data collection as the JSON files were scraped  from the University of California San Diego Amazon Reviews 2023 website [@amazonreviews2023]. The university’s source index page contained multiple JSON.gz files separated by product category such as all_beauty, disks, movies_and_tv, etc. All files were later dumped into the S3 bucket subfolder, amazon_raw/S3 so that the files were not stored locally as each file contained more than 1 million records thus were incredibly large. 
 
 
 
@@ -49,13 +49,13 @@ The second step of the pipeline was data  preprocessing and consisted of the fol
 ##### 1. Data Cleaning
 
 
-Each JSON file was read from the amazon_raw/ S3 subfolder and their reviewText, summary, and title fields were lowercased, scrubbed of URLs, usernames, non-ASCII characters, punctuation, and extra whitespace. Due to computational constraints, only the all_beauty json file was successfully cleaned. By removing these characters from the text, the models were able to focus on useful as opposed to human level text markers.
+Each JSON file was read from the amazon_raw/ S3 subfolder and their text fields were lowercased, scrubbed of URLs, usernames, non-ASCII characters, punctuation, and extra whitespace. Due to computational constraints, only the all_beauty json file was successfully cleaned. By removing these characters from the text, the models were able to focus on useful as opposed to human level text markers.
 
 ##### 2. Named Entity Recognition Redaction
 
 NER, which is the NLP process of recognizing known entities from text and replacing them with tags, was then conducted. The model used for this process is  spaCy’s en_core_web_sm model. For example, detected people, organizations, locations, and other entity types were replaced with tags like [PERSON], [ORG], and [LOCATION]. By doing so, NER prevents the model from creating topics around specific entities. The clean file was written to a temporary file and then uploaded to the amazon_clean/S3 subfolder. 
 
-#### 3. Text Preprocessing
+##### 3. Text Preprocessing
 Further text preprocessing was conducted in the AmazonPreprocessor class, which was the vectorization class, because more noise appeared when the topics were being generated. The noise elimination included scikit-learn’s token pattern of length less than three, HTML tags such as “br” and “nbsp” and stopwords. The removed stopwords included scikit-learn’s English list and NLTK stopwords. As the analysis was on Amazon reviews, certain words such  “great” and “product” were expected from the data. They were therefore removed to assure that meaningful signals were captured from the topics.
 
 #### C. Data Transformation
@@ -64,18 +64,16 @@ The third step of the pipeline was the generation of three types of vectors, cou
 
 ##### 1. Count vectorization
 
-Count vectorization was conducted using the class build_count_vectors method, which collected the clean files from S3 and fitted a scikit-learn CountVectorizer model to the text. The parameters of the model included the consideration of both unigrams and bigrams, a maximum of 40,000 features, and a frequency filter of (min_df=20, max_df=0.5). By applying these parameters, signal words and two word phrases were considered in the count. The model’s features did not exceed an exorbitant number of features. Only words of moderate frequency were considered as overly frequent and overly rare words were not considered from the corpus. As a result, sparse documents–term matrix and vocabulary mapping were added to the amazon_vectors/countvectorizer/S3 subfolder as vectors.npz and vocab.json.
-
-
+Count vectorization was conducted using the build_count_vectors class method, which collected the clean files from S3 and fitted a scikit-learn CountVectorizer model to the text. The parameters of the model included the consideration of both unigrams and bigrams, a maximum of 40,000 features, and a frequency filter of (min_df=20, max_df=0.5). By applying these parameters, signal words and two word phrases were considered in the count vectors. The model’s features did not exceed an exorbitant number of features. Only words of moderate frequency were considered as overly frequent and overly rare words were not considered from the corpus. As a result, sparse documents–term matrix and vocabulary mapping were added to the amazon_vectors/countvectorizer/S3 subfolder as vectors.npz and vocab.json.
 
 
 ##### 2. Term Frequency–Inverse Document Frequency Vectorization
 
-Term Frequency-Inverse Document Frequency vectorization was conducted using the build_tfidf_vectors class method which used the same document stream, token pattern, stopwords, ngram_range, and frequency thresholds as the count vectorization model. This step produced a sparse matrix of TF–IDF weights instead of raw counts. As a result, count vectors, the matrix and the vocabulary were then uploaded to S3 under amazon_vectors/tfidf/ for later modeling.
+Term Frequency-Inverse Document Frequency vectorization was conducted using the build_tfidf_vectors class method, which used the same document stream, token pattern, stopwords, ngram_range, and frequency thresholds as the count vectorization model. This step produced a sparse matrix of TF–IDF weights instead of raw counts. As a result, count vectors, the matrix and the vocabulary were then uploaded to S3 under amazon_vectors/tfidf/ for later modeling.
 
 ##### 3. Sentence embeddings
 
-Dense sentence embeddings were created using the build_embeddings method by loading the  SentenceTransformer all-MiniLM-L6-v2. The model encoded the clean text in batches of 64 into a fixed-size NumPy array of embeddings. The array was saved as embeddings.npy and uploaded to amazon_vectors/embeddings/S3 subfolder. 
+Dense sentence embeddings were created using the build_embeddings class method by loading the  SentenceTransformer all-MiniLM-L6-v2. The model encoded the clean text in batches of 64 into a fixed-size NumPy array of embeddings. The array was saved as embeddings.npy and uploaded to amazon_vectors/embeddings/S3 subfolder. 
 
 ####  D. Exploratory Data Analysis
 
@@ -113,20 +111,20 @@ Dense sentence embeddings were created using the build_embeddings method by load
 
 #### E. Modeling 
 
-The fifth step in the pipeline was the training of the three selected topic models, Latent Dirichlet Allocation, Latent Semantic Analysis, and Bidirectional Encoder Representations from Transformers. The three models used the three types of vectors as input and provided insights on how these models would perform. Each model outputted 10 topics. Graphs were also generated to better understand the result . The outputs of each model were saved in the data/ local folder 
+The fifth step in the pipeline was the training of the three selected topic models, Latent Dirichlet Allocation, Latent Semantic Analysis, and Bidirectional Encoder Representations from Transformers Topic. The three models used the three types of vectors as input and provided insights on how these models would perform. Each model outputted 10 topics. Graphs were also generated to better understand the result. The outputs of each model were saved in the data/ local folder. 
 
 
 ##### 1. Latent Dirichlet Allocation
-A Latent Dirichlet Allocation (LDA) model from scikit-learn was fitted to the previously saved All Beauty Amazon reviews count vectors to generate 10 topics. As the literature has established LDA treats each document as a mix of topics, and each topic as a group of words that often appear together [@blei2003lda] . 
+A Latent Dirichlet Allocation (LDA) model from scikit-learn was fitted to the previously saved All Beauty Amazon reviews count vectors to generate 10 topics. As the literature has established LDA treats each document as a mix of topics, and each topic as a group of words that often appear together [@blei2003lda]. 
 
 The model’s parameters consisted of batch processing with a random seed for consistency. The 10 topics were considered by the words that received the highest weights. The resulting files were a text file of the generated topics, the trained model and a JSON file of the corpus’ vocabulary. In sum, the directory included count_vectors.npz, vocab.json, lda_topics.txt, and a wordclouds folder. Each set of words were later interpreted as short phrases so that they can be easily understood. Word clouds were generated to better understand the weight of each word in a topic as the words with the highest weights appear bigger than the others. All outputs were saved locally under the data/lda_results folder. These outputs would later be evaluated to determine the LDA model’s performance as compared to the other two models.
 
 
 ##### 2. Latent Semantic Analysis 
 
-Latent Semantic Analysis (LSA), identified lower-dimensional topics in the All Beauty Amazon reviews. LSA applied Truncated SVD to the TFIDF matrix, which reduced sparse text features to dense semantic components [@deerwester1990lsa]. The workflow downloaded the TFIDF vectors and vocabulary from S3 and loaded the sparse matrix locally to keep the feature space aligned with the preprocessing step.
+Latent Semantic Analysis (LSA), identified lower-dimensional topics in the All Beauty Amazon reviews. LSA applied Truncated SVD to the TF-IDF matrix, which reduced sparse text features to dense semantic components [@deerwester1990lsa]. The workflow downloaded the TF-IDF vectors and vocabulary from S3 and loaded the sparse matrix locally to keep the feature space aligned with the preprocessing step.
 
-The model used ten topics using scikit learn TruncatedSVD with a fixed random seed. The pipeline applied a Normalizer after SVD to produce stable document embeddings. After training, the code extracted the highest weight terms for each component from the SVD loadings. These terms highlighted the words that define each LSA dimension.
+The model used ten topics using scikitlearn TruncatedSVD with a fixed random seed. The pipeline applied a Normalizer after SVD to produce stable document embeddings. After training, the code extracted the highest weight terms for each component from the SVD loadings. These terms highlighted the words that define each LSA dimension.
 
 
 
@@ -134,11 +132,11 @@ The model used ten topics using scikit learn TruncatedSVD with a fixed random se
 
 ---
 
-## IV Results 
+## IV. Results 
 
 ### A. Latent Dirichlet Analysis 
 
-The 10 topics generated by the LDA model were consistent with the beauty product theme of the dataset. As the top weighted words were considered as the topics, each set of words can be easily characterized as a beauty product category. For example, as seen in the LDA topics table below, the first topic included words such as “hair”, “iron”, “heat” , which can easily be interpreted as heat styling tools. The second topic included words such as “brush”, “quality”, “bristle", which can be interpreted as brush set quality. Overall, the topics reflected a very specific category of the beauty theme as some topic were about eye products and the other was about foot products.
+The 10 topics generated by the LDA model were consistent with the beauty product theme of the dataset. As the top weighted words were considered to be the topics, each set of words can be easily characterized as a beauty product category. For example, as seen in the LDA topics table below, the first topic included words such as “hair”, “iron”, “heat” , which can easily be interpreted as heat styling tools. The second topic included words such as “brush”, “quality”, “bristle", which can be interpreted as brush set quality. Overall, the topics reflected a very specific category of the beauty theme as some topic was about eye products and the other was about foot products.
 
 <p align="center">
   <iframe src="./data/lda_results/ldatable.png" width="800" height="500"></iframe>
@@ -147,7 +145,7 @@ The 10 topics generated by the LDA model were consistent with the beauty product
 
 
 
-When considering Topic 0 wordcloud more closely, it was obvious that “hair”, “iron” “clips” and “flat” were the largest in size in that wordcloud; they were the highest weighted terms in that topic. For that reason, it was easily determined that this particular topic could be interpreted as hair heating tools. 
+When considering Topic 0 wordcloud more closely, it was obvious that “hair”, “iron” “clips” and “flat” were the largest in size in that wordcloud; they were the highest weighted terms in that topic. For that reason, it was easily determined that this particular topic could be interpreted as hair heating tools topic. 
 
 <p align="center">
   <iframe src="./data/lda_results/wordclouds/topic_0.png" width="800" height="500"></iframe>
@@ -156,14 +154,12 @@ When considering Topic 0 wordcloud more closely, it was obvious that “hair”,
 
 ### B. Latent Semantic Analysis
 
-The 10 generated topics from the LSA model were also consistent with the beauty product theme of the dataset. These words were considered the highest signals of the TF-IDF space. However, although the topics were interpreted as phrases, the separation of the beauty categories of the topics were not as distinct as the LDA. For example, the first topic included words such as “hair”, “skin” and “face”, which can place this category in all three categories. The second topic was more consistent with a curly hair care topic. The third topic included words such as “hair”, “skin” and “face”, which can again describe the three categories for beauty products. 
+The 10 generated topics from the LSA model were also consistent with the beauty product theme of the dataset. These words were considered the highest signals of the TF-IDF space. However, although the topics were interpreted as phrases, the separation of the beauty categories of the topics were not as distinct as the LDA. For example, the first topic included words such as “hair”, “skin” and “face”, which can place this category in all three beauty product categories. The second topic was more consistent with a curly hair care topic. The third topic included words such as “hair”, “skin” and “face”, which can again describe the three categories for beauty products. 
 
 <p align="center">
   <iframe src="./data/lsa_results/lsatable.png" width="800" height="500"></iframe>
    <figcaption>Figure 7: LDA Topic terms and themes for All Beauty reviews</figcaption>
 </p>
-
-Figure 6
 
 
 The weight distribution of each topic was visualized in the following figure. Between a range of -1 and 1, the weight of each topic indicated how strongly a topic represented the documents that it was reflecting. For example, topic 0 had the highest median weight, which shows that it represented the broadest spread in the vocabulary as compared to the other topics. Some topics show a wider distribution as compared to others, which indicated that some topics were more specialized than others.
@@ -182,7 +178,7 @@ The weight distribution of each topic was visualized in the following figure. Be
           height="600"
           style="border:none;">
   </iframe>
-   <figcaption>Figure 9: Intertopic Distances in BERTopic Model</figcaption>
+   <figcaption>Figure 9: Inter-topic Distances in BERTopic Model</figcaption>
 </p>
 
 
@@ -242,10 +238,28 @@ Overall BERTopic did outperform the baseline models on topic coherence so texts 
 ---
 
 
-## VI Conclusion 
+## VI. Conclusion 
 
-The original expectation of this study was that BERT would outperform LDA and LSA given the use of sentence embeddings which captured semantic meaning across the corpus. However, the findings of the current study revealed that the comparison of the topic models’ performance was more layered than originally expected. BERTopic outperformed both models in terms of providing human-like topics; while LDA provided more distinctly separated topics and LSA had the lowest overall performance.
-Therefore, deciding on which model would perform the best depended mostly on the objective of the topic modeling task as opposed to the model itself. If discovering distinctly separated topics was the main task, LDA would be the choice. If discovering semantically sound topics was the main task, BERT would be the choice. But, it was clear that LSA underperformed for this current study so it would not be a good choice to implement LSA as a way of topic selection. 
+As was presented in the introduction, the original expectation of this study was that BERT would outperform LDA and LSA given the use of sentence embeddings which captured semantic meaning across the corpus [@grootendorst2022bertopic]. However, the findings of the current study revealed that the comparison of the topic models’ performance was more layered than originally expected. BERTopic outperformed both models in terms of providing human-like topics; while LDA provided more distinctly separated topics. In contrast, LSA had the lowest overall performance.
+
+
+Therefore, deciding on which model would perform the best depended mostly on the objective of the topic modeling task as opposed to the model itself. If discovering distinctly separated topics was the objective of topic modeling, LDA would be the choice. If discovering semantically sound topics was the main objective, BERT would be the choice. That was due to the semantic interpretability that was obtained through the use of  embedding based representation of the text. But, it was clear that LSA underperformed for this current study so it would not be a good choice to implement LSA as a way of topic selection. 
+
+Overall, the current study highlights the importance of clarifying one's objective when performing topic modeling as opposed to relying on the strength of a particular model as each model has shown its strengths and weaknesses 
+
+
+
+### A. Limitations 
+
+The main limitation of this study was computation. The current study sought the use of an EC2 instance and S3 bucket; however, the size of the files remained an obstacle as the analysis progressed. With that as the main obstacle, choices were made throughout the study that reflected that roadblock such as focusing on one Amazon review category, decreasing the number of topics generated to 10, and only processing a subset of the reviews during modeling. As a result, the models could not be evaluated on their performance using more than one product category. The question remained would the models provide even better performance if the entire dataset was used for the current study. 
+
+
+
+### B. Future Works 
+
+To address the limitations of this study, other product categories from the Amazon reviews dataset should topic modelled. Discovering whether the model produced best or worse model performance based on the product category would be an important next step. The task would be to compare the performance of the models across the various product categories. Another improvement would be to combine all of the categories as one corpus to see if each model would be able to decipher topics in the text even when all the categories are combined. Additionally, addressing computational constraints would be a way to improve model performance as the models were trained on subsets of the data. It would be interesting to see if the models would perform better when the models are trained on the entire dataset. Finally, experimenting with the number of topics would be an important step to discover if model performance improve or worsen based on the the number of topics. Overall, hyperparameter tuning in terms of text cleaning, vocabulary size and dimensionality reduction would ultimately find the highest possible performance of each model.
+
+### C. Study's Full Data Pipeline Graph
 
 
 
@@ -253,16 +267,5 @@ Therefore, deciding on which model would perform the best depended mostly on the
   <img src="./data/bert_results/visuals/conclusion_flowchart.png" width="700">
    <figcaption>Figure 10: Current Study's Full Pipeline </figcaption>
 </p>
-
----
-
-## VII Limitations 
-
-The main limitation of this study was computation. The current study sought the use of an EC2 instance and S3 bucket; however, the size of the files remained an obstacle as the analysis progressed. With that as the main obstacle, choices were made throughout the study that reflected that roadblock such as focusing on one Amazon review category, decreasing the number of topics generated to 10, and only processing a subset of the reviews during modeling. As a result, the models could not be evaluated on their performance using more than one product category. The question remained would the models provide even better performance if the entire dataset was used for the current study. 
-
---- 
-
-## VIII Future Works 
-
 
 ## References
