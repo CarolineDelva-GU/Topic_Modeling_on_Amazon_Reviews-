@@ -14,7 +14,7 @@ format: html
 
 Topic modeling is one of the most widely used techniques in the industry today, from technology to health and marketing; it provides powerful tools that assist in organizing and understanding themes in large unstructured text data. This type of modeling automatically discovers meaningful subjects within documents, and enables businesses to better understand conversational structures, uncover common themes, and gain insights into human behavior. Although topic modeling is the most popular approach to understanding human behavior, there are fundamental differences in the multiple methods of topic modeling, which range from probabilistic and dimensional reduction techniques, embedding-based methods, indicating that there is no single solution that is a one-size-fits-all. 
 
-This project explores a comparative analysis of three of the main topic modeling methods today: Latent Dirichlet Allocation (LDA), Latent Semantic Analysis (LSA), and a BERT-based transformer model (BERTopic). This comparison is critical because all of these models use fundamentally different methodologies for processing text and uncovering the themes in it.  The main objective is to evaluate and compare how well these models perform in discovering meaningful topics from an Amazon Reviews dataset. The performance metrics that will be used to measure success are: Topic coherence, Topic diversity, and Clustering performance through Silhouette score. These performance metrics will assess the models’ ability to capture how meaningful and interpretable each topic is and whether top words within a topic have a logically connected theme. Additionally, they measure how distinct the topics are from one another and if a wide range of themes is captured, rather than redundant and overlapping topics. Finally, the metrics will evaluate how well a model groups similar reviews together and validate that topics reflect real structure in customer feedback.
+This project explores a comparative analysis of three of the main topic modeling methods today: Latent Dirichlet Allocation (LDA), Latent Semantic Analysis (LSA), and a Bidirectional Encoder Representations from Transformers model (BERTopic). This comparison is critical because all of these models use fundamentally different methodologies for processing text and uncovering the themes in it.  The main objective is to evaluate and compare how well these models perform in discovering meaningful topics from an Amazon Reviews dataset. The performance metrics that will be used to measure success are: Topic coherence, Topic diversity, and Clustering performance through Silhouette score. These performance metrics will assess the models’ ability to capture how meaningful and interpretable each topic is and whether top words within a topic have a logically connected theme. Additionally, they measure how distinct the topics are from one another and if a wide range of themes is captured, rather than redundant and overlapping topics. Finally, the metrics will evaluate how well a model groups similar reviews together and validate that topics reflect real structure in customer feedback.
 
 ---
 
@@ -22,8 +22,7 @@ This project explores a comparative analysis of three of the main topic modeling
 
 Classic topic modeling, like LDA, represent documents through a "bag-of-words" approach. This framework models each document as a finite mix over latent topics, and then each topic is later on extracted and defined by a distribution over words [@blei2003lda]. Although LDA is a foundational model, it is limited because, it disregards semantic relationships and the natural sequential order of words. This classic probabilistic approach will be the baseline model in our project.
 
-​
-Attempts were made to bridge LDA’s gap between the order of words and the semantic relationship by introducing methods such as LSA. Where LDA would fall short because of its unreliability of simple keyword matching, LSA uses matrix decomposition to discover the latent structure that was disregarded by LDA in the term-document relationships [@deerwester1990lsa]. The LSA model does this by using the Singular Value Decomposition (SVD) method. This matrix decomposition method is used on a term-document matrix that is usually derived from TF-IDF counts, it then  uncovers the underlying latent semantic structure in a reduced-dimensional space [@deerwester1990lsa]. LSA’s ability to overcome issues such as synonymy, many ways to express a concept, and polysemy, words having multiple meanings, highlights why classical models may not be suited to interpret diverse and nuanced corpuses.
+​Attempts were made to bridge LDA’s gap between the order of words and the semantic relationship by introducing methods such as LSA. Where LDA would fall short because of its unreliability of simple keyword matching, LSA uses matrix decomposition to discover the latent structure that was disregarded by LDA in the term-document relationships [@deerwester1990lsa]. The LSA model does this by using the Singular Value Decomposition (SVD) method. This matrix decomposition method is used on a term-document matrix that is usually derived from TF-IDF counts, it then  uncovers the underlying latent semantic structure in a reduced-dimensional space [@deerwester1990lsa]. LSA’s ability to overcome issues such as synonymy, many ways to express a concept, and polysemy, words having multiple meanings, highlights why classical models may not be suited to interpret diverse and nuanced corpuses.
 
 Presently, there are modern contextual topic modeling approaches, such as BERTopic, this model addresses the challenges that were faced by LDA and LSA by completely moving away from the  word-frequency statistics method to instead using rich document embeddings based representations [@grootendorst2022bertopic]. The BERTopic model is able to achieve this by using other pretrained language models like the baseline the Sentence-BERT. The language based transformer converts documents into rich dense embeddings. These embeddings from Sentence-Bert are then later used to uncover semantics, this is done through the encoding of semantic meaning. Additionally, BERTopic tops LDA and LSA, because it is able to use the encodings and generate natural clusters where, similar general ideas/themes are pulled together. These idea clusters (topics) are created in a reduced vector space, that is made by UMAP dimensionality reduction, and the clusters are formed through HDBSCAN. To incorporate semantic meaning and topic interpratation, the model uses a class based procedure (c-TF-IDF) that interprets topic descriptions as well as balances semantics with interpretability [@grootendorst2022bertopic]. 
 
@@ -176,7 +175,9 @@ The weight distribution of each topic was visualized in the following figure. Be
    <figcaption>Figure 8: Distribution of LSA Topic Strengths Across All Documents</figcaption>
 </p>
 
-### D. BERTopic 
+### D. Bidirectional Encoder Representations from Transformers BERTopic 
+
+The top 10 generated topics from the BERTopic model are represented in the interactive figure below. Figure 9 demonstrates how the model was able to capture and separate semantics clearer than the classical models. BERTopic did not include review sentiments but rather captured review products, although certain words such as ‘the’ still appeared; its performance was not hindered. The Amazon reviews data consisted only of beauty products; this scope could have led to an overlap of topics. However, the model was able to group words such as ‘nails’, ‘polish’ together and differentiate them from words such as ‘lashes’, mascara’, ‘liner’. This distinction is produced by the model’s framework of using contextual embeddings, leading to distinct product categories instead of broad and overlapping topics.
 
 
 <p align="center">
@@ -188,24 +189,14 @@ The weight distribution of each topic was visualized in the following figure. Be
    <figcaption>Figure 9: Inter-topic Distances in BERTopic Model</figcaption>
 </p>
 
+Compared to the results of the classical models, which exhibited topic broadness and overlap, BERTopic was able to achieve coherent and specific topics, from fragrance-related products that were identified by scents to distinct makeup items. The model demonstrated higher distinctiveness in its results. 
+
+
+
 
 
 ## V. Model Performance & Comparison 
-
-Topic Coherence: 
-
-  - Assesses how meaningful & interpretable each topic is. 
-  - Ensures that the top words within a topic have a logically connected theme.
-  
-Topic Diversity: 
-
-  - Measures how distinct the topics are from one another.
-  - Ensures that a model captures a wide range of themes instead of redundant or overlapping topics.
-
-Silhouette Score  (Clustering Performance): 
-
-- Evaluates how well the model groups similar reviews together,
-- Validates that topics reflect real structure in customer feedback.
+The topic model performance of all three models was evaluated using three key metrics: topic coherence, topic diversity, and cluster performance through the silhouette score. These performance metrics assisted in assessing the models’ interpretability, distinctiveness, and clustering quality. The results are presented in topic model evaluation comparison table below.
 
 
 #### A. Topic Model Evaluation Comparison
@@ -216,29 +207,7 @@ Silhouette Score  (Clustering Performance):
 | **LSA**        | 0.3058                 | 0.47            | -0.0265                                 |
 | **BERTopic**   | **0.4204**             | 0.6384         | 0.0502                                  |
 
-
-Across all three BERTopic performs best on topic coherence. 
-
-- Discovered themes that are generally more semantically meaningful and internally consistent 
-- Aligns with expectations → relies on dense sentence embeddings instead of raw word counts.
-
-On topic diversity, LDA comes out strongest →  a wider spread of unique top words across topics. 
-
-- Better at separating themes distinctly, even if the topics themselves aren’t as coherent. 
-- LSA struggled → overlapping, less interpretable topics.
-
-For cluster performance, that was measured by silhouette score, LDA again performs the best. 
-- BERTopic’s silhouette score was weak 
-- LSA's poor score → clusters are weakly formed but directionally sensible.
-
-**BERTopic**  was the strongest model for **interpretability** and semantic quality, while **LDA** is the strongest for **structural separation** and topic distinctiveness. LSA consistently underperforms across metrics.
-
-#### WHAT TO MODEL TO USE.....
-
-- If you want meaningful, human-like topic themes →  **BERTopic**.
-- If you need sharply separated clusters → **LDA** is better.
-
-Overall BERTopic did outperform the baseline models on topic coherence so texts such as reviews, the model would be better and capturing real semantic structure. 
+The results indicate that BERTopic achieved the highest performance for topic coherence with a score of 0.4204; the model had the most semantically meaningful and consistent topics. This translates into human readability of the topics, which is essential, especially in product review based data. In contrast to BERTopic, the classical models, LDA and LSA performed poorly on topic coherence wth low scores of 0.3000 and 0.3058, indicating that they reflect broader topics. On topic diversity, the baseline model, LDA outperfomes the other models wth a high score of 0.83; these results showcase the model’s ability to generate topics with distinction and very little redundancy. BERTopic and LSA exhibited low scores of 0.6384 and 0.47, proving that LDA produced the best structural separation between topic themes. The LSA model struggled significantly to produce distinct topics and kept producing redundant topics. For the final metric used for evaluation, the silhouette score, LDA once again outperformed BERTopic and LSA. The LDA model achieved the strongest score of 0.4563, proving that it was the superior model. BERTopic achieved a low score of 0.0502, which suggests that it had weaker clusters despite having strong semantic grouping. Once again, LSA performed poorly with a score of -0.0256, indicating extremely weak clusters. These findings show that  although BERTopic excels in semantics and topic coherence, LDA outperforms the models in structural speration and in distinctiveness for topics presented.
 
 ---
 
