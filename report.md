@@ -97,6 +97,9 @@ After downloading the TF-IDF vectors and vocabulary from S3, the model used ten 
 
 ##### 3. Bidirectional Encoder Representations from Transformers BERTopic 
 
+A BERTopic model was developed using the precomputed sentence transformer embeddings from the methodologies above. Additionally, UMAP was used for dimensionality reduction in combination with HDBSCAN for density-based clustering. Following the clustering, a class based, TF-IDF was implemented to extract the most represented topics for each of the clusters that were formed. The topic assignments were then saved, as well as the topic-word distributions and UMAP coordinates as .npy files in the data/bert_results folder. Leveraging Python’s Plotly library, the results from the BERTopic model were used to develop interactive topic overview plots as well as hierarchies and similarity heatmaps. The visualizations from the BERTopic models will be presented in the results section of this paper.
+
+
 ---
 
 ## IV. Results 
@@ -105,7 +108,7 @@ After downloading the TF-IDF vectors and vocabulary from S3, the model used ten 
 
 ### A. Exploratory Data Analysis
 
-
+The distribution of the review ratings is represented in the figure below, which reveals a strong skew towards positive ratings, with most of them having five-star ratings. More than 420,000 reviews were five-star ratings, this indicates that most customers reported positive ratings with their products. Although ratings are present across all of the categories (1 star - 5 stars), their distribution is highly imbalanced, with one-star having the second largest count with 102,000 reviews. The overall sentiment of the reviews is largely positive, which is important for topic modeling since negative reviews could have introduced a bias, and that would limit our topic diversity.
 
 
 <p align="center">
@@ -114,6 +117,7 @@ After downloading the TF-IDF vectors and vocabulary from S3, the model used ten 
 </p>
 
 
+The frequency distribution of ratings was followed by the frequency distribution of word counts, which revealed that most reviews were relatively short. The figure below shows that more  than 600,000 reviews were under 100 words, indicating that as the frequencies decreased the the word count increased. This distribution is beneficial to us on a computational standpoint, it reduces memory and processing time, however, it presents slight challenges since shorter text provide limited contextual informaton. 
 
 
 <p align="center">
@@ -121,6 +125,9 @@ After downloading the TF-IDF vectors and vocabulary from S3, the model used ten 
    <figcaption>Figure 2: Frequency Distribution of Word Counts Across Beauty Amazon Reviews</figcaption>
 </p>
 
+Figures 3 and 4 explore the final trends examined in our EDA, review behavior between verified and unverified purchase statuses and the temporal trends of review count and ratings. In Figure 3, we can see that verified purchases had the most reviews, most of which were positive, compared to unverified purchases. The findings suggests that most customer feedback comes from confirmed buyers, this is important because it, in turn, strengthens our trust in the data.
+
+Figure 4 complements the results above by showcasing the monthly trends of all of the reviews. The volume of  average reviews throughout the year 2023 experienced a steadily decline; however, the average rating per review did increase over the forecasted period. From these patterns we can conclude that although reviews fluctuate throughout the year, the sentiment remains largely postive and reliable, making it a strong foundation for topic modeling.
 
 
 <p align="center">
